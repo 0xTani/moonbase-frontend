@@ -10,12 +10,13 @@ export default function Sidebar() {
   const router = useRouter();
 
   const routes = [
-    { key: 'membercard1', label: 'Member Card', route: '/membercard' },
-    { key: 'organizations1', label: 'Organizations', route: '/organizations' },
-    { key: 'settings1', label: 'User Settings', route: '/settings' },
-    { key: 'rules1', label: 'Rules', route: '/rules' },
-    { key: 'events1', label: 'Events', route: '/events' },
-    { key: 'pop1', label: 'Buy Pop', route: '/pop' },
+    { key: 'settings', label: '👤 User Settings', route: '/settings' },
+    { key: 'membercard', label: '🖼 Member Card', route: '/membercard' },
+    { key: 'userlist', label: '👥 Users', route: '/users' },
+    { key: 'organizations', label: 'Organizations', route: '/organizations' },
+    { key: 'rules', label: 'Rules', route: '/rules' },
+    { key: 'events', label: 'Events', route: '/events' },
+    { key: 'pop', label: 'Buy Pop', route: '/pop' },
     // { key: '', label: '', route: '/' },
   ];
 
@@ -38,7 +39,7 @@ export default function Sidebar() {
               <ListItem
                 button
                 onClick={() => {
-                  console.log(route.key + ' clicked');
+                  router.push(route.route);
                 }}
               >
                 {/* <ListItemIcon>

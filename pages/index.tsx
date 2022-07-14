@@ -116,19 +116,27 @@ const Home: NextPage = () => {
         </CardContent>
         <Divider />
         <CardContent>
+          <Button variant={'outlined'} color="primary" size={'small'} sx={{ marginRight: '10px' }}>
+            🤝 Member
+          </Button>
           <Button variant={'outlined'} color="success" size={'small'} sx={{ marginRight: '10px' }}>
-            💻 Contributoooor
+            💻 Contributooor
           </Button>
           <Button variant={'outlined'} color="secondary" size={'small'} sx={{ marginRight: '10px' }}>
             ⭐ Legend
+          </Button>
+          <Button variant={'outlined'} color="info" size={'small'} sx={{ marginRight: '10px' }}>
+            🎤 Speakooor
+          </Button>
+          <Button variant={'outlined'} color="warning" size={'small'} sx={{ marginRight: '10px' }}>
+            🐱‍👤 Helpooor
           </Button>
         </CardContent>
       </Card>
     </Grid>
   );
-
   return (
-    <Box sx={{ backgroundColor: '#0a1929' }}>
+    <>
       <Head>
         <title>MoonBase Member Interface</title>
         <meta name="description" content="Decentralized community" />
@@ -137,8 +145,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        {User.user.username.length > 0 ? <Sidebar /> : ''}
-        <TopNavBar />
+        {/* {User.isAuthenticated ? <Sidebar /> : ''} */}
         <Grid
           container
           alignItems={'center'}
@@ -146,10 +153,10 @@ const Home: NextPage = () => {
           sx={{ minHeight: '100vh', textAlign: 'center' }}
         >
           {/* {loginCard} */}
-          {User.user.username.length > 0 ? memberCard : loginCard}
+          {User.isAuthenticated ? memberCard : loginCard}
         </Grid>
       </main>
-    </Box>
+    </>
   );
 };
 
