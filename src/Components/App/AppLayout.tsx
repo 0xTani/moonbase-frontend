@@ -9,7 +9,7 @@ import { IUser } from 'src/Types/TUser';
 const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const User = useUser();
   const router = useRouter();
-
+  // re authenticates user on window reload
   useEffect(() => {
     window.addEventListener('load', function () {
       feathersClient
