@@ -20,10 +20,11 @@ import { capitalizeFirst, isDev } from 'src/Types/helpers';
 import { checkIsAccountActive } from 'client/transactions';
 import feathersClient from 'client';
 import { IUser } from 'src/Types/TUser';
+import { useAccount } from 'wagmi';
 
 const Settings: NextPage = () => {
   const User = useUser();
-
+  const account = useAccount();
   interface State {
     fobId: string;
     password: string;
@@ -67,6 +68,12 @@ const Settings: NextPage = () => {
   }
 
   function linkAddress() {}
+  function saveFobId() {
+    feathersClient
+      .service('users')
+      .patch(User.user.id, { fobId: values.fobId })
+      .then((u: IUser) => User.setUser!(u));
+  }
   const SettingsCard = User.isAuthenticated ? (
     <Grid item md={4}>
       <Card sx={{ textAlign: 'left' }}>
@@ -112,7 +119,6 @@ const Settings: NextPage = () => {
             />
             <FormHelperText>The ETH address you linked. Press Link to link the connected account</FormHelperText>
           </FormControl>
-
           {/* Fob ID field */}
           <FormControl variant="outlined" fullWidth sx={{ marginBottom: '10px' }}>
             <InputLabel htmlFor="outlined-adornment-ethaddress">Fob Number</InputLabel>
@@ -127,7 +133,7 @@ const Settings: NextPage = () => {
                     disabled={User.user.fobId === values.fobId}
                     color="warning"
                     variant="outlined"
-                    onClick={linkAddress}
+                    onClick={saveFobId}
                     sx={{ paddingLeft: '8px', paddingRight: '10px' }}
                   >
                     💾 Save
@@ -214,6 +220,7 @@ const Settings: NextPage = () => {
               endAdornment={
                 <InputAdornment position="end">
                   <Button
+                    disabled={!User.user.ethaddress || User.user.ethaddress.length === 0}
                     color="warning"
                     variant="outlined"
                     onClick={refreshAccountStatus}

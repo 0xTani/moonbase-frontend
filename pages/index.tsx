@@ -1,6 +1,18 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { Button, Card, CardContent, Divider, Grid, TextField, Typography } from '@mui/material';
+import {
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  FormControl,
+  FormHelperText,
+  Grid,
+  InputLabel,
+  OutlinedInput,
+  TextField,
+  Typography,
+} from '@mui/material';
 
 import React from 'react';
 import feathersClient from 'client';
@@ -93,18 +105,41 @@ const Home: NextPage = () => {
         <Divider></Divider>
 
         <CardContent>
-          <Typography variant="h6" component="div" sx={{ margin: '10px 0 10px 0', fontWeight: 600 }}>
-            Address: {User && User.user.ethaddress}
-          </Typography>
-          <Typography variant="h6" component="div" sx={{ margin: '10px 0 10px 0', fontWeight: 600 }}>
-            Fob ID: {User && User.user.fobId}
-          </Typography>
-          <Typography variant="h6" component="div" sx={{ margin: '10px 0 10px 0', fontWeight: 600 }}>
-            Months active: {User && User.user.monthsActive}
-          </Typography>
-          <Typography variant="h6" component="div" sx={{ margin: '10px 0 10px 0', fontWeight: 600 }}>
-            Credits: {User && User.user.credits}
-          </Typography>
+          {/* ETH address */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom: '40px', marginTop: '10px' }}>
+            <InputLabel htmlFor="outlined-adornment-ethaddress">ETH Address</InputLabel>
+            <OutlinedInput
+              readOnly
+              value={User.user.ethaddress}
+              id="outlined-adornment-ethaddress"
+              label="ETH Address"
+            />
+            <FormHelperText>The ETH address you linked.</FormHelperText>
+          </FormControl>
+          {/* Fob ID field */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom: '40px' }}>
+            <InputLabel htmlFor="outlined-adornment-ethaddress">Fob Number</InputLabel>
+            <OutlinedInput readOnly type="number" id="input-fobid" value={User.user.fobId} label="Fob Number" />
+            <FormHelperText>The number on your fob</FormHelperText>
+          </FormControl>
+          {/* Months active field */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom: '40px' }}>
+            <InputLabel htmlFor="outlined-adornment-ethaddress">Months active</InputLabel>
+            <OutlinedInput
+              readOnly
+              type="number"
+              id="input-fobid"
+              value={User.user.monthsActive}
+              label="Months active"
+            />
+            <FormHelperText>The consecutive months you have been an active member</FormHelperText>
+          </FormControl>
+          {/* Months active field */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom: '10px' }}>
+            <InputLabel htmlFor="outlined-adornment-ethaddress">Credit balance</InputLabel>
+            <OutlinedInput readOnly type="number" id="input-fobid" value={User.user.credits} label="Credit balance" />
+            <FormHelperText>Your credit balance</FormHelperText>
+          </FormControl>
         </CardContent>
         <Divider />
         <CardContent>
