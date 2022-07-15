@@ -27,6 +27,7 @@ export function AccountButton() {
       .service('users')
       .patch(User.user.id, { ethaddress: ethaddress })
       .then((r: any) => {
+        console.log('response after patch', r);
         User.setUser!(r);
       })
       .catch((e: any) => console.log(e));
@@ -37,15 +38,14 @@ export function AccountButton() {
   }
 
   const { disconnect } = useDisconnect();
-
   useEffect(() => {
     if (address) {
       if (User.user.ethaddress === '') {
         // address empty, links it
         patchEthAddress(address ? address : '');
       } else if (User.user.ethaddress !== address) {
-        patchEthAddress(address ? address : '');
         console.log('address different');
+        patchEthAddress(address ? address : '');
       }
     }
   }, [address]);

@@ -1,5 +1,5 @@
 import feathersClient from 'client';
-import React, { useMemo } from 'react';
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { createContext, FC, ReactNode } from 'react';
 import { DEFAULT_AUTHENTICATION, DEFAULT_USER } from 'src/Types/Constants';
 import { IAuthentication, IUser } from 'src/Types/TUser';
@@ -29,7 +29,10 @@ export const UserProvider: FC<{ children: ReactNode }> = props => {
   }
   const [user, setUser] = React.useState<IUser>(DEFAULT_USER);
   const [authentication, setAuthentication] = React.useState<IAuthentication>(DEFAULT_AUTHENTICATION);
-  const isAuthenticated = useMemo(() => user.username.length > 0, [user]);
+
+  useEffect(() => {
+    console.log('user modified in context', user);
+  }, [user]);
 
   return (
     <UserContext.Provider

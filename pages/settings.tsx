@@ -1,63 +1,28 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import {
-  Box,
   Button,
   Card,
   CardContent,
-  CardHeader,
   Divider,
   FormControl,
   FormHelperText,
   Grid,
-  IconButton,
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  TextField,
   Typography,
 } from '@mui/material';
 
-import React from 'react';
-import feathersClient from 'client';
-import Sidebar from 'src/Components/App/Sidebar';
-import { TopNavBar } from 'src/Components/App/TopNavBar';
+import React, { useEffect } from 'react';
 import { useUser } from 'src/Hooks/useUser';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 function capitalizeFirst(input: string) {
   return input.charAt(0).toUpperCase() + input.slice(1);
 }
 
 const Settings: NextPage = () => {
-  const [credentials, setCredentials] = React.useState({ username: 'tristani', password: 'yesser' });
   const User = useUser();
-
-  const handleUserNameChange = (event: any) => {
-    setCredentials(credentials => ({
-      ...credentials,
-      username: event.target.value,
-    }));
-  };
-  const handlePasswordChange = (event: any) => {
-    setCredentials(credentials => ({
-      ...credentials,
-      password: event.target.value,
-    }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      await feathersClient.authenticate({ strategy: 'local', ...credentials });
-      const result = await feathersClient.get('authentication');
-      if (result) {
-        User.setUser!(result.user);
-        User.setAuthentication!(result.authentication);
-      }
-    } catch (error: any) {
-      throw Error(error);
-    }
-  };
 
   interface State {
     fobId: string;
@@ -65,24 +30,18 @@ const Settings: NextPage = () => {
     repeatPassword: string;
     showPassword: boolean;
   }
+
+  //   sets fobId when page gets refreshed
+  useEffect(() => {
+    setValues({ ...values, fobId: User.user.fobId ? User.user.fobId : '' });
+  }, [User.user.fobId]);
+
   const [values, setValues] = React.useState<State>({
-    fobId: User.user.fobId ? User.user.fobId : '',
+    fobId: '',
     password: '',
     repeatPassword: '',
     showPassword: false,
   });
-
-  const handleClickShowPassword = () => {
-    setValues({
-      ...values,
-      showPassword: !values.showPassword,
-    });
-    console.log(values.showPassword);
-  };
-
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
 
   const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(prop, event);
@@ -91,7 +50,7 @@ const Settings: NextPage = () => {
 
   function linkAddress() {}
 
-  const memberCard = (
+  const SettingsCard = User.isAuthenticated ? (
     <Grid item md={4}>
       <Card sx={{ textAlign: 'left' }}>
         <CardContent>
@@ -108,7 +67,7 @@ const Settings: NextPage = () => {
             </Button>
           )}
         </CardContent>
-        <Divider></Divider>
+        <Divider />
 
         <CardContent>
           {/* ETH address */}
@@ -162,28 +121,18 @@ const Settings: NextPage = () => {
           </FormControl>
         </CardContent>
         <Divider />
+
+        {/* Password fields */}
+
         <CardContent sx={{ textAlign: 'center', marginTop: '1rem' }}>
-          {/* Password fields */}
           <FormControl variant="outlined" fullWidth sx={{ marginBottom: '2rem' }}>
-            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+            <InputLabel htmlFor="input-password">Password</InputLabel>
             <OutlinedInput
               autoComplete="off"
-              id="outlined-adornment-password"
+              id="input-password"
               type={values.showPassword ? 'text' : 'password'}
               value={values.password}
               onChange={handleChange('password')}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
               label="Password"
             />
           </FormControl>
@@ -195,18 +144,6 @@ const Settings: NextPage = () => {
               type={values.showPassword ? 'text' : 'password'}
               value={values.repeatPassword}
               onChange={handleChange('repeatPassword')}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
               label="Repeat Password"
             />
           </FormControl>
@@ -253,7 +190,9 @@ const Settings: NextPage = () => {
             <OutlinedInput
               readOnly
               value={User.user.active === 1 ? 'Active' : 'Inactive'}
-              id="input-status"
+              id="input-status
+              
+              "
               endAdornment={
                 <InputAdornment position="end">
                   <Button
@@ -273,27 +212,12 @@ const Settings: NextPage = () => {
             </FormHelperText>
           </FormControl>
         </CardContent>
-        <Divider />
-        <CardContent>
-          <Button variant={'outlined'} color="primary" size={'small'} sx={{ marginRight: '10px' }}>
-            🤝 Member
-          </Button>
-          <Button variant={'outlined'} color="success" size={'small'} sx={{ marginRight: '10px' }}>
-            💻 Contributooor
-          </Button>
-          <Button variant={'outlined'} color="secondary" size={'small'} sx={{ marginRight: '10px' }}>
-            ⭐ Legend
-          </Button>
-          <Button variant={'outlined'} color="info" size={'small'} sx={{ marginRight: '10px' }}>
-            🎤 Speakooor
-          </Button>
-          <Button variant={'outlined'} color="warning" size={'small'} sx={{ marginRight: '10px' }}>
-            🐱‍👤 Helpooor
-          </Button>
-        </CardContent>
       </Card>
     </Grid>
+  ) : (
+    ''
   );
+
   return (
     <>
       <Head>
@@ -304,15 +228,13 @@ const Settings: NextPage = () => {
       </Head>
 
       <main>
-        {/* {User.isAuthenticated ? <Sidebar /> : ''} */}
         <Grid
           container
           alignItems={'center'}
           justifyContent={'center'}
           sx={{ minHeight: '100vh', textAlign: 'center' }}
         >
-          {/* {loginCard} */}
-          {User.isAuthenticated ? memberCard : memberCard}
+          {SettingsCard}
         </Grid>
       </main>
     </>

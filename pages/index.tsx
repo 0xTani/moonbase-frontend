@@ -1,11 +1,9 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { Box, Button, Card, CardContent, CardHeader, Divider, Grid, TextField, Typography } from '@mui/material';
+import { Button, Card, CardContent, Divider, Grid, TextField, Typography } from '@mui/material';
 
 import React from 'react';
 import feathersClient from 'client';
-import Sidebar from 'src/Components/App/Sidebar';
-import { TopNavBar } from 'src/Components/App/TopNavBar';
 import { useUser } from 'src/Hooks/useUser';
 
 function capitalizeFirst(input: string) {
@@ -98,9 +96,6 @@ const Home: NextPage = () => {
         <Divider></Divider>
 
         <CardContent>
-          {/* <Typography variant="h6" component="div" sx={{ margin: '10px 0 10px 0', fontWeight: 600 }}>
-            Username: {User && User.user.username}
-          </Typography> */}
           <Typography variant="h6" component="div" sx={{ margin: '10px 0 10px 0', fontWeight: 600 }}>
             Address: {User && User.user.ethaddress}
           </Typography>
