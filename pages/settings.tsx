@@ -17,6 +17,9 @@ import {
 import React, { useEffect } from 'react';
 import { useUser } from 'src/Hooks/useUser';
 import { capitalizeFirst, isDev } from 'src/Types/helpers';
+import { checkIsAccountActive } from 'client/transactions';
+import feathersClient from 'client';
+import { IUser } from 'src/Types/TUser';
 
 const Settings: NextPage = () => {
   const User = useUser();
@@ -28,7 +31,7 @@ const Settings: NextPage = () => {
     showPassword: boolean;
   }
 
-  //   sets fobId when page gets refreshed
+  //   sets fobId when page gets refreshed, prob needs to be cleaner
   useEffect(() => {
     setValues({ ...values, fobId: User.user.fobId ? User.user.fobId : '' });
   }, [User.user.fobId]);
@@ -45,15 +48,34 @@ const Settings: NextPage = () => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
-  function linkAddress() {}
+  function refreshAccountStatus() {
+    if (User.user.ethaddress) {
+      const userStatusBoolean = User.user.active === 1;
+      checkIsAccountActive(User.user.ethaddress).then((active: boolean) => {
+        console.log('active: ', active);
+        if (userStatusBoolean !== active) {
+          feathersClient
+            .service('users')
+            .patch(User.user.id, { active: active })
+            .then((user: IUser) => {
+              console.log(user);
+              User.setUser!(user);
+            });
+        }
+      });
+    }
+  }
 
+  function linkAddress() {}
   const SettingsCard = User.isAuthenticated ? (
     <Grid item md={4}>
       <Card sx={{ textAlign: 'left' }}>
         <CardContent>
+          {/* username */}
           <Typography variant="h5" component="span" sx={{ margin: '10px 0 10px 0', fontWeight: 600, flexGrow: 1 }}>
             🌒 {User.user && capitalizeFirst(User.user.username)}
           </Typography>
+          {/* active button */}
           {User.user.active === 1 ? (
             <Button variant={'outlined'} color="success" size={'small'} sx={{ float: 'right' }}>
               Active
@@ -120,7 +142,6 @@ const Settings: NextPage = () => {
         <Divider />
 
         {/* Password fields */}
-
         <CardContent sx={{ textAlign: 'center', marginTop: '1rem' }}>
           <FormControl variant="outlined" fullWidth sx={{ marginBottom: '2rem' }}>
             <InputLabel htmlFor="input-password">Password</InputLabel>
@@ -195,7 +216,7 @@ const Settings: NextPage = () => {
                   <Button
                     color="warning"
                     variant="outlined"
-                    onClick={linkAddress}
+                    onClick={refreshAccountStatus}
                     sx={{ paddingLeft: '8px', paddingRight: '10px' }}
                   >
                     🔎 Refresh

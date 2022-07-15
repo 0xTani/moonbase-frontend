@@ -4,7 +4,6 @@ import { AppBar, Box, Button, Card, CardContent, Divider, Grid, TextField, Toolb
 
 import React from 'react';
 import feathersClient from 'client';
-import Sidebar from 'src/Components/App/Sidebar';
 
 interface IUserResponse {
   id: number;
@@ -129,7 +128,6 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {/* #f2a900 */}
       <main>
         <AppBar position="fixed" sx={{ backgroundColor: '#003162' }}>
           <Toolbar>

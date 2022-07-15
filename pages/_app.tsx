@@ -5,7 +5,7 @@ import { darkTheme } from 'styles/theme';
 import { WagmiConfig } from 'wagmi';
 import { wagmiClient } from 'src/config/wagmiconfig';
 import { UserProvider } from 'src/context/UserContext';
-import { Box, CssBaseline } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import AppLayout from 'src/Components/App/AppLayout';
 
 function MyApp({ Component, pageProps }: AppProps) {

@@ -27,15 +27,5 @@ export interface IAuthentication {
 
 export interface IAuthenticationResponse {
   user: IUser;
-  authentication: {
-    accessToken: string | undefined;
-    payload: {
-      aud: string;
-      exp: number;
-      iat: number;
-      iss: string;
-      jti: string;
-      sub: string;
-    };
-  };
+  authentication: IAuthentication;
 }

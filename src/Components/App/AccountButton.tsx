@@ -8,8 +8,8 @@ import { isDev } from 'src/Types/helpers';
 
 function addressShorten(address: string | undefined) {
   if (address) {
-    const truncateRegex = /^(0x[a-zA-Z0-9]{3})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/;
-    const match = address.match(truncateRegex);
+    const REGEX_ADDRESSIFY = /^(0x[a-zA-Z0-9]{3})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/;
+    const match = address.match(REGEX_ADDRESSIFY);
     if (!match) return address;
     return `${match[1]}…${match[2]}`;
   } else return undefined;
@@ -19,7 +19,7 @@ export function AccountButton() {
   const User = useUser();
   const { address, isConnected } = useAccount();
   const { data: ensName } = useEnsName({ address });
-  const { connect, status, error } = useConnect({
+  const { connect } = useConnect({
     connector: new InjectedConnector(),
   });
 
