@@ -5,10 +5,7 @@ import { Button, Card, CardContent, Divider, Grid, TextField, Typography } from 
 import React from 'react';
 import feathersClient from 'client';
 import { useUser } from 'src/Hooks/useUser';
-
-function capitalizeFirst(input: string) {
-  return input.charAt(0).toUpperCase() + input.slice(1);
-}
+import { capitalizeFirst } from 'src/Types/helpers';
 
 const Home: NextPage = () => {
   const [credentials, setCredentials] = React.useState({ username: 'tristani', password: 'yesser' });

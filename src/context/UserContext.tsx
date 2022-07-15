@@ -1,7 +1,8 @@
 import feathersClient from 'client';
-import React, { Dispatch, SetStateAction, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { createContext, FC, ReactNode } from 'react';
 import { DEFAULT_AUTHENTICATION, DEFAULT_USER } from 'src/Types/Constants';
+import { isDev } from 'src/Types/helpers';
 import { IAuthentication, IUser } from 'src/Types/TUser';
 
 interface IUserContext {
@@ -31,7 +32,7 @@ export const UserProvider: FC<{ children: ReactNode }> = props => {
   const [authentication, setAuthentication] = React.useState<IAuthentication>(DEFAULT_AUTHENTICATION);
 
   useEffect(() => {
-    console.log('user modified in context', user);
+    if (isDev) console.log('user modified in context', user);
   }, [user]);
 
   return (

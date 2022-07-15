@@ -21,10 +21,6 @@ interface IUserResponse {
   updatedAt: string;
 }
 
-function capitalizeFirst(input: string) {
-  return input.charAt(0).toUpperCase() + input.slice(1);
-}
-
 const Home: NextPage = () => {
   const [credentials, setCredentials] = React.useState({ username: '', password: '', fobId: '', ethaddress: '' });
   const [registered, setRegistered] = React.useState(false);

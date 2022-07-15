@@ -16,10 +16,7 @@ import {
 
 import React, { useEffect } from 'react';
 import { useUser } from 'src/Hooks/useUser';
-
-function capitalizeFirst(input: string) {
-  return input.charAt(0).toUpperCase() + input.slice(1);
-}
+import { capitalizeFirst, isDev } from 'src/Types/helpers';
 
 const Settings: NextPage = () => {
   const User = useUser();
@@ -44,7 +41,7 @@ const Settings: NextPage = () => {
   });
 
   const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(prop, event);
+    if (isDev) console.log(prop, event);
     setValues({ ...values, [prop]: event.target.value });
   };
 
