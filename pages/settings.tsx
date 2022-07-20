@@ -45,7 +45,6 @@ const Settings: NextPage = () => {
   });
 
   const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (isDev) console.log(prop, event);
     setValues({ ...values, [prop]: event.target.value });
   };
 
@@ -53,13 +52,13 @@ const Settings: NextPage = () => {
     if (User.user.ethaddress) {
       const userStatusBoolean = User.user.active === 1;
       checkIsAccountActive(User.user.ethaddress).then((active: boolean) => {
-        console.log('active: ', active);
+        if (isDev) console.log('active: ', active);
         if (userStatusBoolean !== active) {
           feathersClient
             .service('users')
             .patch(User.user.id, { active: active })
             .then((user: IUser) => {
-              console.log(user);
+              if (isDev) console.log('refresh account status: ', user);
               User.setUser!(user);
             });
         }

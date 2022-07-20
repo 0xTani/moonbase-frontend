@@ -3,7 +3,7 @@ import feathersClient from 'client';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
-import { capitalizeFirst } from 'src/Types/helpers';
+import { capitalizeFirst, isDev } from 'src/Types/helpers';
 import { IUser } from 'src/Types/TUser';
 
 const Users: NextPage = () => {
@@ -11,12 +11,16 @@ const Users: NextPage = () => {
     const [users, setUsers] = React.useState(new Array<IUser>)
   function fetchUsers() {
     feathersClient.service('users').find().then((users:any)=>{
-        console.log(users)
+         if (isDev) console.log(users)
         setUsers(users.data) 
     })
   }
 
-  useEffect(()=>fetchUsers())
+  useEffect(()=>{
+    window.addEventListener('load', function () {
+      fetchUsers()
+    })
+      })
   return (
     <>
       <Head>

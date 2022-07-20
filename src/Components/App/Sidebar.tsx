@@ -11,7 +11,7 @@ export default function Sidebar() {
 
   const routes = [
     { key: 'settings', label: '👤 User Settings', route: '/settings' },
-    { key: 'membercard', label: '🖼 Member Card', route: '/membercard' },
+    { key: 'membership', label: '🖼 Membership', route: '/membership' },
     { key: 'userlist', label: '👥 Users', route: '/users' },
     { key: 'organizations', label: 'Organizations', route: '/organizations' },
     { key: 'rules', label: 'Rules', route: '/rules' },

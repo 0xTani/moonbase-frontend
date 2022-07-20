@@ -2,7 +2,7 @@ import feathersClient from 'client';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import { createContext, FC, ReactNode } from 'react';
-import { DEFAULT_AUTHENTICATION, DEFAULT_USER } from 'src/Types/Constants';
+import { DEFAULT_AUTHENTICATION as AUTHENTICATION_DEFAULT, DEFAULT_USER } from 'src/Types/Constants';
 import { isDev } from 'src/Types/helpers';
 import { IAuthentication, IUser } from 'src/Types/TUser';
 
@@ -11,14 +11,35 @@ interface IUserContext {
   setUser?: React.Dispatch<React.SetStateAction<IUser>>;
   authentication: IAuthentication;
   setAuthentication?: React.Dispatch<React.SetStateAction<IAuthentication>>;
+  membercardData: IMembercardData;
+  setMembercardData?: React.Dispatch<React.SetStateAction<IMembercardData>>;
   isAuthenticated: boolean;
   logout: () => void;
 }
 
+interface ITokenUri {
+  name: string;
+  description: string;
+  image: string;
+}
+
+interface IMembercardData {
+  id: number | null;
+  tokenUriUrl: string;
+  tokenUriJson: ITokenUri | null;
+}
+
+export const MEMBERCARD_DATA_DEFAULT: IMembercardData = {
+  id: null,
+  tokenUriUrl: '',
+  tokenUriJson: null,
+};
+
 export const UserContext = createContext<IUserContext>({
   user: DEFAULT_USER,
-  authentication: DEFAULT_AUTHENTICATION,
+  authentication: AUTHENTICATION_DEFAULT,
   isAuthenticated: false,
+  membercardData: MEMBERCARD_DATA_DEFAULT,
   logout: () => {},
 });
 
@@ -26,22 +47,32 @@ export const UserProvider: FC<{ children: ReactNode }> = props => {
   const router = useRouter();
   function logout() {
     feathersClient.logout().then(() => {
-      setAuthentication(DEFAULT_AUTHENTICATION);
+      setAuthentication(AUTHENTICATION_DEFAULT);
       setUser(DEFAULT_USER);
       router.push('/');
     });
   }
   const [user, setUser] = React.useState<IUser>(DEFAULT_USER);
-  const [authentication, setAuthentication] = React.useState<IAuthentication>(DEFAULT_AUTHENTICATION);
+  const [authentication, setAuthentication] = React.useState<IAuthentication>(AUTHENTICATION_DEFAULT);
+  const [membercardData, setMembercardData] = React.useState<IMembercardData>(MEMBERCARD_DATA_DEFAULT);
 
-  // dev only
-  useEffect(() => {
-    if (isDev) console.log('user modified in context', user);
-  }, [user]);
+  // // dev only
+  // useEffect(() => {
+  //   if (isDev) console.log('user modified in context', user);
+  // }, [user]);
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, authentication, setAuthentication, isAuthenticated: !!user.username, logout }}
+      value={{
+        user,
+        setUser,
+        authentication,
+        setAuthentication,
+        isAuthenticated: !!user.username,
+        logout,
+        membercardData,
+        setMembercardData,
+      }}
     >
       {props.children}
     </UserContext.Provider>

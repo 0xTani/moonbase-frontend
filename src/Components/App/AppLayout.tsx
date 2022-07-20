@@ -5,6 +5,7 @@ import { FC, ReactNode, useEffect } from 'react';
 import feathersClient from 'client';
 import { useRouter } from 'next/router';
 import { IUser } from 'src/Types/TUser';
+import { isDev } from 'src/Types/helpers';
 
 const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const User = useUser();
@@ -12,10 +13,11 @@ const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   // re authenticates user on window reload
   useEffect(() => {
     window.addEventListener('load', function () {
+      if (isDev) console.log('load app layout');
       feathersClient
         .authenticate()
         .then(result => {
-          console.log('authentication set', result.user);
+          isDev ? console.log('authentication set', result.user) : '';
           feathersClient
             .service('users')
             .get(result.user.id)

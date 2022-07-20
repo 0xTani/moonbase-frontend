@@ -4,7 +4,6 @@ import { useUser } from 'src/Hooks/useUser';
 import { useEffect } from 'react';
 import { useAccount, useConnect, useEnsName, useDisconnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
-import { isDev } from 'src/Types/helpers';
 
 function addressShorten(address: string | undefined) {
   if (address) {
@@ -28,10 +27,9 @@ export function AccountButton() {
       .service('users')
       .patch(User.user.id, { ethaddress: ethaddress })
       .then((r: any) => {
-        if (isDev) console.log('response after patch', r);
         User.setUser!(r);
       })
-      .catch((e: any) => console.log(e));
+      .catch((e: any) => console.error(e));
   }
 
   function clickConnect() {
@@ -45,7 +43,7 @@ export function AccountButton() {
         // address empty, links it
         patchEthAddress(address ? address : '');
       } else if (User.user.ethaddress !== address) {
-        console.log('address different');
+        // @todo patches eth address after web3 user connection, should change to manual / prompt
         patchEthAddress(address ? address : '');
       }
     }

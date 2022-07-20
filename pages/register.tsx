@@ -4,6 +4,7 @@ import { AppBar, Box, Button, Card, CardContent, Divider, Grid, TextField, Toolb
 
 import React from 'react';
 import feathersClient from 'client';
+import { isDev } from 'src/Types/helpers';
 
 interface IUserResponse {
   id: number;
@@ -56,7 +57,7 @@ const Home: NextPage = () => {
         .create(credentials)
         .then((r: any) => {
           setRegistered(true);
-          console.log(r);
+          if (isDev) console.log(r);
         })
         .catch((e: any) => console.log(e));
     } catch (error: any) {
