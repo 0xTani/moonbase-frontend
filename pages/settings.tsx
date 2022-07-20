@@ -75,7 +75,7 @@ const Settings: NextPage = () => {
       .then((u: IUser) => User.setUser!(u));
   }
   const SettingsCard = User.isAuthenticated ? (
-    <Grid item md={4}>
+    <Grid item md={10} lg={8} xl={5}>
       <Card sx={{ textAlign: 'left' }}>
         <CardContent>
           {/* username */}
@@ -257,7 +257,7 @@ const Settings: NextPage = () => {
           container
           alignItems={'center'}
           justifyContent={'center'}
-          sx={{ minHeight: '100vh', textAlign: 'center' }}
+          sx={{ minHeight: '100vh', textAlign: 'center', paddingLeft: '250px' }}
         >
           {SettingsCard}
         </Grid>
