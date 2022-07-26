@@ -7,20 +7,23 @@ import { wagmiClient } from 'src/config/wagmiconfig';
 import { UserProvider } from 'src/context/UserContext';
 import { CssBaseline } from '@mui/material';
 import AppLayout from 'src/Components/App/AppLayout';
+import { UsersProvider } from 'src/context/UsersContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <UserProvider>
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline>
-          <WagmiConfig client={wagmiClient}>
-            <AppLayout>
-              <Component {...pageProps} />
-            </AppLayout>
-          </WagmiConfig>
-        </CssBaseline>
-      </ThemeProvider>
-    </UserProvider>
+    <UsersProvider>
+      <UserProvider>
+        <ThemeProvider theme={darkTheme}>
+          <CssBaseline>
+            <WagmiConfig client={wagmiClient}>
+              <AppLayout>
+                <Component {...pageProps} />
+              </AppLayout>
+            </WagmiConfig>
+          </CssBaseline>
+        </ThemeProvider>
+      </UserProvider>
+    </UsersProvider>
   );
 }
 

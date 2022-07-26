@@ -4,9 +4,9 @@ import React, { useEffect } from 'react';
 import { createContext, FC, ReactNode } from 'react';
 import { DEFAULT_AUTHENTICATION as AUTHENTICATION_DEFAULT, DEFAULT_USER } from 'src/Types/Constants';
 import { isDev } from 'src/Types/helpers';
-import { IAuthentication, IUser } from 'src/Types/TUser';
+import { IAuthentication, IMembercardData, IUser } from 'src/Types/TUser';
 
-interface IUserContext {
+export interface IUserContext {
   user: IUser;
   setUser?: React.Dispatch<React.SetStateAction<IUser>>;
   authentication: IAuthentication;
@@ -15,18 +15,6 @@ interface IUserContext {
   setMembercardData?: React.Dispatch<React.SetStateAction<IMembercardData>>;
   isAuthenticated: boolean;
   logout: () => void;
-}
-
-interface ITokenUri {
-  name: string;
-  description: string;
-  image: string;
-}
-
-interface IMembercardData {
-  id: number | null;
-  tokenUriUrl: string;
-  tokenUriJson: ITokenUri | null;
 }
 
 export const MEMBERCARD_DATA_DEFAULT: IMembercardData = {
@@ -56,10 +44,10 @@ export const UserProvider: FC<{ children: ReactNode }> = props => {
   const [authentication, setAuthentication] = React.useState<IAuthentication>(AUTHENTICATION_DEFAULT);
   const [membercardData, setMembercardData] = React.useState<IMembercardData>(MEMBERCARD_DATA_DEFAULT);
 
-  // // dev only
-  // useEffect(() => {
-  //   if (isDev) console.log('user modified in context', user);
-  // }, [user]);
+  // dev only
+  useEffect(() => {
+    if (isDev) console.log('user modified in context', user);
+  }, [user]);
 
   return (
     <UserContext.Provider

@@ -29,3 +29,15 @@ export interface IAuthenticationResponse {
   user: IUser;
   authentication: IAuthentication;
 }
+
+export interface ITokenUri {
+  name: string;
+  description: string;
+  image: string;
+}
+
+export interface IMembercardData {
+  id: number | null;
+  tokenUriUrl: string;
+  tokenUriJson: ITokenUri | null;
+}
