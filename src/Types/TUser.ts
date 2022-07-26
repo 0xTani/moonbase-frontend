@@ -1,12 +1,14 @@
 export interface IUser {
   id: number;
   username: string;
-  ethaddress: string | null;
+  ethaddress: string;
   fobId: string | null;
   alias: string | null;
   password: string;
   credits: number;
   active: number;
+  badges: string;
+  organizations: string;
   monthsActive: number;
   pfp: string | null;
   createdAt?: string;
@@ -40,4 +42,12 @@ export interface IMembercardData {
   id: number | null;
   tokenUriUrl: string;
   tokenUriJson: ITokenUri | null;
+}
+
+export interface IBadge {
+  id: number;
+  name: string;
+  definition: string;
+  color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning' | undefined;
+  maxUsers: number;
 }

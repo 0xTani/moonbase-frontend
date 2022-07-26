@@ -13,6 +13,15 @@ const Users: NextPage = () => {
       Users.fetchUsers();
     });
   });
+
+  function displayBadges(userBadgesString: string) {
+    return Users.getUserBadges(userBadgesString).map(b => (
+      <Button variant="outlined" size="small" color={b.color} sx={{ marginLeft: '10px' }}>
+        {b.name}
+      </Button>
+    ));
+  }
+
   return (
     <>
       <Head>
@@ -35,7 +44,7 @@ const Users: NextPage = () => {
             paddingBottom: '30px',
           }}
         >
-          <Grid item md={8}>
+          <Grid item md={8} lg={10} xl={11}>
             <TableContainer component={Paper}>
               <Table aria-label="simple table">
                 <TableHead>
@@ -44,6 +53,7 @@ const Users: NextPage = () => {
                     <TableCell align="center">Status</TableCell>
                     <TableCell align="center">Twitter</TableCell>
                     <TableCell align="center">Telegram</TableCell>
+                    <TableCell align="left">Badges</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -65,6 +75,7 @@ const Users: NextPage = () => {
                       </TableCell>
                       <TableCell align="right"></TableCell>
                       <TableCell align="right"></TableCell>
+                      <TableCell align="left">{displayBadges(user.badges)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
