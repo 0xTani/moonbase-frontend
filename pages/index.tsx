@@ -18,10 +18,12 @@ import React from 'react';
 import feathersClient from 'client';
 import { useUser } from 'src/Hooks/useUser';
 import { capitalizeFirst } from 'src/Types/helpers';
+import { useUsers } from 'src/Hooks/useUsers';
 
 const Home: NextPage = () => {
   const [credentials, setCredentials] = React.useState({ username: 'tristani', password: 'yesser' });
   const User = useUser();
+  const Users = useUsers();
 
   const handleUserNameChange = (event: any) => {
     setCredentials(credentials => ({
@@ -43,7 +45,9 @@ const Home: NextPage = () => {
       if (result) {
         User.setUser!(result.user);
         User.setAuthentication!(result.authentication);
+        Users.fetchUsers();
       }
+      // @todo error typing
     } catch (error: any) {
       console.warn(error);
     }

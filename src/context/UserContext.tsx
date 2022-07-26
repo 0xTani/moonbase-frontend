@@ -2,6 +2,7 @@ import feathersClient from 'client';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import { createContext, FC, ReactNode } from 'react';
+import { useUsers } from 'src/Hooks/useUsers';
 import { DEFAULT_AUTHENTICATION as AUTHENTICATION_DEFAULT, DEFAULT_USER } from 'src/Types/Constants';
 import { isDev } from 'src/Types/helpers';
 import { IAuthentication, IMembercardData, IUser } from 'src/Types/TUser';
@@ -32,11 +33,13 @@ export const UserContext = createContext<IUserContext>({
 });
 
 export const UserProvider: FC<{ children: ReactNode }> = props => {
+  const Users = useUsers();
   const router = useRouter();
   function logout() {
     feathersClient.logout().then(() => {
       setAuthentication(AUTHENTICATION_DEFAULT);
       setUser(DEFAULT_USER);
+      Users.clearUsers();
       router.push('/');
     });
   }

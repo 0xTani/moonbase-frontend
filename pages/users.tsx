@@ -25,9 +25,15 @@ const Users: NextPage = () => {
       <main>
         <Grid
           container
-          alignItems={'center'}
           justifyContent={'center'}
-          sx={{ minHeight: '100vh', textAlign: 'center', paddingLeft: '250px' }}
+          sx={{
+            minHeight: 'calc(100vh - 64px)',
+            textAlign: 'center',
+            paddingLeft: '250px',
+            marginTop: '64px',
+            paddingTop: '30px',
+            paddingBottom: '30px',
+          }}
         >
           <Grid item md={8}>
             <TableContainer component={Paper}>
