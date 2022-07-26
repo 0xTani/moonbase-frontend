@@ -45,7 +45,7 @@ const Home: NextPage = () => {
         User.setAuthentication!(result.authentication);
       }
     } catch (error: any) {
-      throw Error(error);
+      console.warn(error);
     }
   };
 

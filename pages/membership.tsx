@@ -3,7 +3,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
-import { isDev } from 'src/Types/helpers';
 
 import { useAccount, useProvider, useSigner } from 'wagmi';
 import NFT from 'src/abi/MyEpicNFT.json';
@@ -29,9 +28,10 @@ const Users: NextPage = () => {
     const response = await ct.mintMoonbaseNFT(`${User.user.id}`);
 
     if (!response.wait) return;
-    const transactionResponse = await response.wait();
-    setDisplayMint(false);
-    loadNFTs();
+    response.wait().then(() => {
+      setDisplayMint(false);
+      loadNFTs();
+    });
   }
 
   async function loadNFTs() {
