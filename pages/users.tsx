@@ -1,4 +1,5 @@
 import { Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import feathersClient from 'client';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
@@ -20,6 +21,14 @@ const Users: NextPage = () => {
         {b.name}
       </Button>
     ));
+  }
+
+  function patchUser() {
+    feathersClient.service('users').patch(3, { badges: [2, 6] });
+    console.log('users: ', Users.users);
+  }
+  function patchUser1() {
+    feathersClient.service('users').patch(3, { badges: [1, 2, 6] });
   }
 
   return (
@@ -81,6 +90,8 @@ const Users: NextPage = () => {
                 </TableBody>
               </Table>
             </TableContainer>
+            <Button onClick={patchUser1}> Patch user 1 2 6</Button>
+            <Button onClick={patchUser}> Patch user 2 6</Button>
           </Grid>
         </Grid>
       </main>
