@@ -35,6 +35,7 @@ export const UserContext = createContext<IUserContext>({
 export const UserProvider: FC<{ children: ReactNode }> = props => {
   const Users = useUsers();
   const router = useRouter();
+
   function logout() {
     feathersClient.logout().then(() => {
       setAuthentication(AUTHENTICATION_DEFAULT);
@@ -48,9 +49,9 @@ export const UserProvider: FC<{ children: ReactNode }> = props => {
   const [membercardData, setMembercardData] = React.useState<IMembercardData>(MEMBERCARD_DATA_DEFAULT);
 
   // dev only
-  useEffect(() => {
-    if (isDev) console.log('user modified in context', user);
-  }, [user]);
+  // useEffect(() => {
+  //   if (isDev) console.log('user modified in context', user);
+  // }, [user]);
 
   return (
     <UserContext.Provider

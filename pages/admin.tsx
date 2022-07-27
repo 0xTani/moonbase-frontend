@@ -1,62 +1,51 @@
-import {
-  Button,
-  Grid,
-  Paper,
-  styled,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Tooltip,
-  tooltipClasses,
-  TooltipProps,
-} from '@mui/material';
+import { Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import feathersClient from 'client';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
+import { isUserIdInArray } from 'src/context/UsersContext';
 import { useUsers } from 'src/Hooks/useUsers';
 import { capitalizeFirst } from 'src/Types/helpers';
+import { IBadgeDisplay } from 'src/Types/TUser';
 
-const Users: NextPage = () => {
+const Admin: NextPage = () => {
   const Users = useUsers();
 
   useEffect(() => {
     window.addEventListener('load', function () {
-      console.log('calledddddddddddddddddddddd');
       Users.fetchUsers();
     });
   });
 
-  function displayBadges(userBadgesString: string) {
-    return Users.getUserBadges(userBadgesString).map(b => (
-      <Button variant="outlined" size="small" color={b.color} sx={{ marginLeft: '10px' }}>
-        {b.name}
+  function badgeClicked(badge: IBadgeDisplay, userBadgesString: string, userId: number) {
+    let newUserBadges = JSON.parse(userBadgesString);
+    if (badge.isEquipped) {
+      newUserBadges = newUserBadges.filter((b: number) => b !== badge.id);
+    } else {
+      newUserBadges.push(badge.id);
+      newUserBadges.sort();
+    }
+    feathersClient.service('users').patch(userId, { badges: newUserBadges });
+  }
+
+  function displayBadges(userBadgesString: string, userId: number) {
+    // const allBadges = Users.
+    console.log('display badges', Users.getBadgesAdmin(userBadgesString));
+
+    return Users.getBadgesAdmin(userBadgesString).map(badge => (
+      <Button
+        onClick={() => {
+          badgeClicked(badge, userBadgesString, userId);
+        }}
+        variant="outlined"
+        size="small"
+        color={badge.color}
+        sx={{ marginLeft: '10px', opacity: badge.isEquipped ? '1' : '0.4' }}
+      >
+        {badge.name}
       </Button>
     ));
   }
-
-  function patchUser() {
-    feathersClient.service('users').patch(3, { badges: [2, 6] });
-    console.log('users.tsx: ', Users.users);
-  }
-  function patchUser1() {
-    feathersClient.service('users').patch(3, { badges: [1, 2, 6] });
-  }
-
-  const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: '#f5f5f9',
-      color: 'rgba(0, 0, 0, 0.87)',
-      maxWidth: 220,
-      fontSize: theme.typography.pxToRem(12),
-      border: '1px solid #dadde9',
-    },
-  }));
 
   return (
     <>
@@ -94,7 +83,7 @@ const Users: NextPage = () => {
                 </TableHead>
                 <TableBody>
                   {Users.users.map(user => (
-                    <TableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableRow key={user.id + user.fobId!} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                       <TableCell component="th" scope="row">
                         {capitalizeFirst(user.username)}
                       </TableCell>
@@ -111,14 +100,12 @@ const Users: NextPage = () => {
                       </TableCell>
                       <TableCell align="right"></TableCell>
                       <TableCell align="right"></TableCell>
-                      <TableCell align="left">{displayBadges(user.badges)}</TableCell>
+                      <TableCell align="left">{displayBadges(user.badges, user.id)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
-            <Button onClick={patchUser1}> Patch user 1 2 6</Button>
-            <Button onClick={patchUser}> Patch user 2 6</Button>
           </Grid>
         </Grid>
       </main>
@@ -126,4 +113,4 @@ const Users: NextPage = () => {
   );
 };
 
-export default Users;
+export default Admin;

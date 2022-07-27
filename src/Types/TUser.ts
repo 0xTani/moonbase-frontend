@@ -51,3 +51,6 @@ export interface IBadge {
   color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning' | undefined;
   maxUsers: number;
 }
+export interface IBadgeDisplay extends IBadge {
+  isEquipped: boolean;
+}

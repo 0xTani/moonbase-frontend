@@ -17,6 +17,7 @@ export default function Sidebar() {
     { key: 'rules', label: 'Rules', route: '/rules' },
     { key: 'events', label: 'Events', route: '/events' },
     { key: 'pop', label: 'Buy Pop', route: '/pop' },
+    { key: 'admin panel', label: 'Admin panel', route: '/admin' },
     // { key: '', label: '', route: '/' },
   ];
 
