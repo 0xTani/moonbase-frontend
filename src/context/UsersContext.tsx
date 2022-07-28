@@ -1,6 +1,7 @@
 import feathersClient from 'client';
 import React, { createContext, useEffect } from 'react';
 import { FC, ReactNode } from 'react';
+import { useUser } from 'src/Hooks/useUser';
 import { useUsers } from 'src/Hooks/useUsers';
 import { DEFAULT_USER } from 'src/Types/Constants';
 import { isDev } from 'src/Types/helpers';
@@ -133,7 +134,6 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
     console.log('setListeners users', users);
     if (!usersPatchedListener)
       usersPatchedListener = feathersClient.service('users').on('patched', (user: IUser) => {
-        // setUser(user)
         setUser2(user);
       });
 

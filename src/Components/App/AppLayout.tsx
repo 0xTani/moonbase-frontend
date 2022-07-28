@@ -27,7 +27,7 @@ const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
               .service('users')
               .get(result.user.id)
               .then((user: IUser) => {
-                User.setUser!(user);
+                User.initUser!(user);
               });
             Users.fetchUsers('app layout');
             User.setAuthentication!(result.authentication);

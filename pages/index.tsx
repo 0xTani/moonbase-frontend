@@ -76,7 +76,7 @@ const Home: NextPage = () => {
       await feathersClient.authenticate({ strategy: 'local', ...credentials });
       const result = await feathersClient.get('authentication');
       if (result) {
-        User.setUser!(result.user);
+        User.initUser!(result.user);
         User.setAuthentication!(result.authentication);
         Users.fetchUsers('index');
       }
@@ -179,9 +179,7 @@ const Home: NextPage = () => {
           </FormControl>
         </CardContent>
         <Divider />
-        <CardContent>
-          {displayBadges(User.user.badges)}
-        </CardContent>
+        <CardContent>{displayBadges(User.user.badges)}</CardContent>
       </Card>
     </Grid>
   );

@@ -16,6 +16,7 @@ export interface IUserContext {
   setMembercardData?: React.Dispatch<React.SetStateAction<IMembercardData>>;
   isAuthenticated: boolean;
   logout: () => void;
+  initUser: (user: IUser) => void;
 }
 
 export const MEMBERCARD_DATA_DEFAULT: IMembercardData = {
@@ -30,11 +31,39 @@ export const UserContext = createContext<IUserContext>({
   isAuthenticated: false,
   membercardData: MEMBERCARD_DATA_DEFAULT,
   logout: () => {},
+  initUser: (user: IUser) => {},
 });
 
 export const UserProvider: FC<{ children: ReactNode }> = props => {
   const Users = useUsers();
   const router = useRouter();
+
+  let usersPatchedListener = false;
+  function setListeners() {
+    console.log('listeners settttt');
+    if (!usersPatchedListener) {
+      feathersClient.service('users').on('patched', (user: IUser) => {
+        fetchUser();
+      });
+      usersPatchedListener = true;
+    }
+  }
+
+  // @todo change that
+  function fetchUser() {
+    feathersClient.get('authentication').then((u: any) => {
+      feathersClient
+        .service('users')
+        .get(u.user.id)
+        .then((user: IUser) => setUser(user));
+    });
+  }
+
+  function initUser(user: IUser) {
+    console.log('init userrr');
+    setUser(user);
+    setListeners();
+  }
 
   function logout() {
     feathersClient.logout().then(() => {
@@ -64,6 +93,7 @@ export const UserProvider: FC<{ children: ReactNode }> = props => {
         logout,
         membercardData,
         setMembercardData,
+        initUser,
       }}
     >
       {props.children}
