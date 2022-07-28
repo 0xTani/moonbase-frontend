@@ -25,6 +25,8 @@ import { useAccount } from 'wagmi';
 const Settings: NextPage = () => {
   const User = useUser();
   const account = useAccount();
+
+  // todo change that interface
   interface State {
     fobId: string;
     password: string;

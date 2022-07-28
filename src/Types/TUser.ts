@@ -4,6 +4,8 @@ export interface IUser {
   ethaddress: string;
   fobId: string | null;
   alias: string | null;
+  twitter: string;
+  telegram: string;
   password: string;
   credits: number;
   active: number;
@@ -13,6 +15,11 @@ export interface IUser {
   pfp: string | null;
   createdAt?: string;
   updatedAt?: string;
+}
+export type INewUser = Pick<IUser, 'username' | 'fobId' | 'alias' | 'password' | 'twitter' | 'telegram'>;
+
+export interface INewUserForm extends INewUser {
+  repeatpassword: string;
 }
 
 export interface IAuthentication {

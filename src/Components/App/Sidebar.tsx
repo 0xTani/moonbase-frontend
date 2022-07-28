@@ -13,11 +13,12 @@ export default function Sidebar() {
     { key: 'settings', label: '👤 User Settings', route: '/settings' },
     { key: 'membership', label: '🖼 Membership', route: '/membership' },
     { key: 'userlist', label: '👥 Users', route: '/users' },
-    { key: 'organizations', label: 'Organizations', route: '/organizations' },
-    { key: 'rules', label: 'Rules', route: '/rules' },
-    { key: 'events', label: 'Events', route: '/events' },
-    { key: 'pop', label: 'Buy Pop', route: '/pop' },
-    { key: 'admin panel', label: 'Admin panel', route: '/admin' },
+    { key: 'ETH Van', label: '🔷 ETH Van', route: '/organizations' },
+    // { key: 'rules', label: 'Rules', route: '/rules' },
+    { key: 'events', label: '📅 Events', route: '/events' },
+    { key: 'pop', label: '🥤 Buy Pop', route: '/pop' },
+    { key: 'register', label: '👨‍🔧 Register', route: '/register' },
+    { key: 'admin panel', label: '⚙ Admin panel', route: '/admin' },
     // { key: '', label: '', route: '/' },
   ];
 

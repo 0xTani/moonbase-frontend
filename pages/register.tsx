@@ -1,120 +1,138 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import { AppBar, Box, Button, Card, CardContent, Divider, Grid, TextField, Toolbar, Typography } from '@mui/material';
-
-import React from 'react';
+import {
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  FormControl,
+  FormHelperText,
+  Grid,
+  InputLabel,
+  OutlinedInput,
+  Typography,
+} from '@mui/material';
 import feathersClient from 'client';
-import { isDev } from 'src/Types/helpers';
+import { NextPage } from 'next';
+import Head from 'next/head';
+import React from 'react';
+import { DEFAULT_NEW_USER_FORM } from 'src/Types/Constants';
+import { INewUserForm } from 'src/Types/TUser';
 
-interface IUserResponse {
-  id: number;
-  username: string;
-  ethaddress: string | null;
-  fobId: string | null;
-  alias: string | null;
-  password: string;
-  credits: number;
-  active: number;
-  monthsActive: number;
-  pfp: string;
-  createdAt: string;
-  updatedAt: string;
-}
+const Register: NextPage = () => {
+  const [newUser, setNewUser] = React.useState<INewUserForm>(DEFAULT_NEW_USER_FORM);
 
-const Home: NextPage = () => {
-  const [credentials, setCredentials] = React.useState({ username: '', password: '', fobId: '', ethaddress: '' });
-  const [registered, setRegistered] = React.useState(false);
-
-  const handleUserNameChange = (event: any) => {
-    setCredentials(credentials => ({
-      ...credentials,
-      username: event.target.value,
-    }));
-  };
-  const handlePasswordChange = (event: any) => {
-    setCredentials(credentials => ({
-      ...credentials,
-      password: event.target.value,
-    }));
-  };
-  const handleEthAddressChange = (event: any) => {
-    setCredentials(credentials => ({
-      ...credentials,
-      ethaddress: event.target.value,
-    }));
-  };
-  const handleFobIdChange = (event: any) => {
-    setCredentials(credentials => ({
-      ...credentials,
-      fobId: event.target.value,
-    }));
+  const handleChange = (prop: keyof INewUserForm) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewUser({ ...newUser, [prop]: event.target.value });
   };
 
-  const handleSubmit = async () => {
-    try {
-      feathersClient
-        .service('users')
-        .create(credentials)
-        .then((r: any) => {
-          setRegistered(true);
-          if (isDev) console.log(r);
-        })
-        .catch((e: any) => console.log(e));
-    } catch (error: any) {
-      throw Error(error);
-    }
-  };
+  function register() {
+    feathersClient.service('users').create(newUser).then(setNewUser(DEFAULT_NEW_USER_FORM));
+  }
 
-  const loginCard = (
+  const marginBottom = '25px';
+
+  const memberCard = (
     <Grid item md={4}>
-      <Card>
+      <Card sx={{ textAlign: 'left' }}>
         <CardContent>
-          <Typography variant="h5" component="div" sx={{ margin: '10px 0 10px 0', fontWeight: 600 }}>
-            🌒 MoonBase Sign Up
+          <Typography variant="h5" component="span" sx={{ margin: '10px 0 10px 0', fontWeight: 600, flexGrow: 1 }}>
+            🌒 New user
           </Typography>
         </CardContent>
         <Divider></Divider>
-
         <CardContent>
-          <TextField
-            fullWidth
-            id="usernameinput"
-            label="Username"
+          {/* Username */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom }}>
+            <InputLabel htmlFor="outlined-adornment-ethaddress">Username</InputLabel>
+            <OutlinedInput
+              onChange={handleChange('username')}
+              value={newUser.username}
+              id="register-username"
+              label="Username"
+            />
+            <FormHelperText>Username</FormHelperText>
+          </FormControl>
+
+          {/* Alias */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom }}>
+            <InputLabel htmlFor="outlined-adornment-ethaddress">Alias</InputLabel>
+            <OutlinedInput
+              onChange={handleChange('alias')}
+              value={newUser.alias}
+              id="register-username"
+              label="Alias"
+            />
+            <FormHelperText>Alias - Can be blank</FormHelperText>
+          </FormControl>
+
+          {/* Twitter */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom }}>
+            <InputLabel htmlFor="outlined-adornment-ethaddress">Twitter</InputLabel>
+            <OutlinedInput
+              onChange={handleChange('twitter')}
+              value={newUser.twitter}
+              id="register-username"
+              label="Twitter"
+            />
+            <FormHelperText>Twitter - Can be blank</FormHelperText>
+          </FormControl>
+
+          {/* Telegram */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom }}>
+            <InputLabel htmlFor="outlined-adornment-ethaddress">Telegram</InputLabel>
+            <OutlinedInput
+              onChange={handleChange('telegram')}
+              value={newUser.telegram}
+              id="register-username"
+              label="Alias"
+            />
+            <FormHelperText>Telegram - Can be blank</FormHelperText>
+          </FormControl>
+
+          {/* Fob ID field */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom }}>
+            <InputLabel htmlFor="register-fobid">Fob Number</InputLabel>
+            <OutlinedInput
+              onChange={handleChange('fobId')}
+              type="number"
+              id="register-fobid"
+              value={newUser.fobId}
+              label="Fob Number"
+            />
+            <FormHelperText>The number on your fob</FormHelperText>
+          </FormControl>
+          {/* Password */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom }}>
+            <InputLabel htmlFor="register-password">Password</InputLabel>
+            <OutlinedInput
+              onChange={handleChange('password')}
+              type="password"
+              id="register-password"
+              value={newUser.password}
+              label="Password"
+            />
+            <FormHelperText>Password</FormHelperText>
+          </FormControl>
+          {/* Months active field */}
+          <FormControl variant="outlined" fullWidth sx={{ marginBottom: '20px' }}>
+            <InputLabel htmlFor="register-repeatpassword">Repeat password</InputLabel>
+            <OutlinedInput
+              onChange={handleChange('repeatpassword')}
+              type="password"
+              id="register-repeatpassword"
+              value={newUser.repeatpassword}
+              label="Repeat password"
+            />
+            <FormHelperText>Repeat password</FormHelperText>
+          </FormControl>
+
+          <Button
+            disabled={!(newUser.password !== '' && newUser.password === newUser.repeatpassword)}
             variant="outlined"
-            margin="normal"
-            value={credentials.username}
-            onChange={handleUserNameChange}
-          />
-          <TextField
-            fullWidth
-            type={'password'}
-            id="passwordinput"
-            label="Password"
-            variant="outlined"
-            margin="normal"
-            value={credentials.password}
-            onChange={handlePasswordChange}
-          />
-          <TextField
-            fullWidth
-            id="fobinput"
-            label="Fob ID"
-            variant="outlined"
-            margin="normal"
-            value={credentials.fobId}
-            onChange={handleFobIdChange}
-          />
-          <TextField
-            fullWidth
-            id="fobinput"
-            label="ETH Address"
-            variant="outlined"
-            margin="normal"
-            value={credentials.ethaddress}
-            onChange={handleEthAddressChange}
-          />
-          <Button variant="outlined" sx={{ marginTop: '15px' }} onClick={handleSubmit}>
-            Join 🌒
+            onClick={() => {
+              register();
+            }}
+          >
+            Create new User
           </Button>
         </CardContent>
       </Card>
@@ -122,36 +140,26 @@ const Home: NextPage = () => {
   );
 
   return (
-    <Box sx={{ backgroundColor: '#0a1929' }}>
+    <>
       <Head>
         <title>MoonBase Member Interface</title>
         <meta name="description" content="Decentralized community" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <main>
-        <AppBar position="fixed" sx={{ backgroundColor: '#003162' }}>
-          <Toolbar>
-            <Typography variant="h6">MoonBase Station</Typography>
-          </Toolbar>
-        </AppBar>
         <Grid
           container
           alignItems={'center'}
           justifyContent={'center'}
-          sx={{ minHeight: '100vh', textAlign: 'center' }}
+          sx={{ minHeight: '100vh', textAlign: 'center', paddingLeft: '250px' }}
         >
-          {registered ? (
-            <Typography variant="h2" color="#f2a900">
-              Welcome to MoonBase!
-            </Typography>
-          ) : (
-            loginCard
-          )}
+          {memberCard}
         </Grid>
       </main>
-    </Box>
+    </>
   );
 };
 
-export default Home;
+export default Register;

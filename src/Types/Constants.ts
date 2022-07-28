@@ -1,4 +1,4 @@
-import { IAuthentication, IUser } from './TUser';
+import { IAuthentication, INewUser, INewUserForm, IUser } from './TUser';
 
 export const DEFAULT_AUTHENTICATION: IAuthentication = {
   accessToken: null,
@@ -16,6 +16,8 @@ export const DEFAULT_USER: IUser = {
   username: '',
   active: 0,
   alias: null,
+  twitter: '',
+  telegram: '',
   createdAt: '',
   credits: 0,
   ethaddress: '',
@@ -27,4 +29,14 @@ export const DEFAULT_USER: IUser = {
   password: '',
   pfp: '',
   updatedAt: '',
+};
+
+export const DEFAULT_NEW_USER_FORM: INewUserForm = {
+  username: '',
+  alias: '',
+  twitter: '',
+  telegram: '',
+  fobId: '',
+  password: '',
+  repeatpassword: '',
 };

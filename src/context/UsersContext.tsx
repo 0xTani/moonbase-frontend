@@ -126,12 +126,19 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
   }
 
   let usersPatchedListener: any = null;
+  let usersCreatedListener: any = null;
 
   //   @todo patch individual user
   function setListeners() {
     console.log('setListeners users', users);
     if (!usersPatchedListener)
       usersPatchedListener = feathersClient.service('users').on('patched', (user: IUser) => {
+        // setUser(user)
+        setUser2(user);
+      });
+
+    if (!usersCreatedListener)
+      usersCreatedListener = feathersClient.service('users').on('created', (user: IUser) => {
         // setUser(user)
         setUser2(user);
       });

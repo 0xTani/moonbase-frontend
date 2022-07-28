@@ -32,8 +32,9 @@ const Users: NextPage = () => {
   // });
 
   function displayBadges(userBadgesString: string) {
-    return Users.getUserBadges(userBadgesString).map(b => (
+    return Users.getUserBadges(userBadgesString).map((b, i: number) => (
       <HtmlTooltip
+        key={i}
         title={
           <React.Fragment>
             <Typography color="inherit">{b.name}</Typography>

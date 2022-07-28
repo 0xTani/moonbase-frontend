@@ -4,17 +4,12 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import React from 'react';
 import { useUsers } from 'src/Hooks/useUsers';
+import { DEFAULT_NEW_USER_FORM } from 'src/Types/Constants';
 import { capitalizeFirst } from 'src/Types/helpers';
-import { IBadgeDisplay } from 'src/Types/TUser';
+import { IBadgeDisplay, INewUserForm } from 'src/Types/TUser';
 
 const Admin: NextPage = () => {
   const Users = useUsers();
-
-  // useEffect(() => {
-  //   window.addEventListener('load', function () {
-  //     Users.fetchUsers('admin');
-  //   });
-  // });
 
   function badgeClicked(badge: IBadgeDisplay, userBadgesString: string, userId: number) {
     let newUserBadges = JSON.parse(userBadgesString);
@@ -28,10 +23,9 @@ const Admin: NextPage = () => {
   }
 
   function displayBadges(userBadgesString: string, userId: number) {
-    // const allBadges = Users.
-
-    return Users.getBadgesAdmin(userBadgesString).map(badge => (
+    return Users.getBadgesAdmin(userBadgesString).map((badge, i: number) => (
       <Button
+        key={i}
         onClick={() => {
           badgeClicked(badge, userBadgesString, userId);
         }}
