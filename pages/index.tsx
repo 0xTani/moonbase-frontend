@@ -10,7 +10,11 @@ import {
   Grid,
   InputLabel,
   OutlinedInput,
+  styled,
   TextField,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
   Typography,
 } from '@mui/material';
 
@@ -24,6 +28,35 @@ const Home: NextPage = () => {
   const [credentials, setCredentials] = React.useState({ username: 'tristani', password: 'yesser' });
   const User = useUser();
   const Users = useUsers();
+
+  function displayBadges(userBadgesString: string) {
+    return Users.getUserBadges(userBadgesString).map((b, i: number) => (
+      <HtmlTooltip
+        key={i}
+        title={
+          <React.Fragment>
+            <Typography color="inherit">{b.name}</Typography>
+            <p>{b.definition}</p>
+          </React.Fragment>
+        }
+      >
+        <Button variant="outlined" size="small" color={b.color} sx={{ marginLeft: '10px' }}>
+          {b.name}
+        </Button>
+      </HtmlTooltip>
+    ));
+  }
+
+  const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: '#001e3c',
+      maxWidth: 320,
+      fontSize: theme.typography.pxToRem(14),
+      border: '1px solid #dadde9',
+    },
+  }));
 
   const handleUserNameChange = (event: any) => {
     setCredentials(credentials => ({
@@ -147,21 +180,7 @@ const Home: NextPage = () => {
         </CardContent>
         <Divider />
         <CardContent>
-          <Button variant={'outlined'} color="primary" size={'small'} sx={{ marginRight: '10px' }}>
-            🤝 Member
-          </Button>
-          <Button variant={'outlined'} color="success" size={'small'} sx={{ marginRight: '10px' }}>
-            💻 Contributooor
-          </Button>
-          <Button variant={'outlined'} color="secondary" size={'small'} sx={{ marginRight: '10px' }}>
-            ⭐ Legend
-          </Button>
-          <Button variant={'outlined'} color="info" size={'small'} sx={{ marginRight: '10px' }}>
-            🎤 Speakooor
-          </Button>
-          <Button variant={'outlined'} color="warning" size={'small'} sx={{ marginRight: '10px' }}>
-            🐱‍👤 Helpooor
-          </Button>
+          {displayBadges(User.user.badges)}
         </CardContent>
       </Card>
     </Grid>
