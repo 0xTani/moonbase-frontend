@@ -22,6 +22,10 @@ const Admin: NextPage = () => {
     feathersClient.service('users').patch(userId, { badges: newUserBadges });
   }
 
+  function activeClicked(userId: number, newActive: boolean) {
+    feathersClient.service('users').patch(userId, { active: newActive });
+  }
+
   function displayBadges(userBadgesString: string, userId: number) {
     return Users.getBadgesAdmin(userBadgesString).map((badge, i: number) => (
       <Button
@@ -84,11 +88,25 @@ const Admin: NextPage = () => {
                       </TableCell>
                       <TableCell align="center">
                         {user.active === 1 ? (
-                          <Button variant={'outlined'} color="success" size={'small'}>
+                          <Button
+                            variant={'outlined'}
+                            color="success"
+                            size={'small'}
+                            onClick={() => {
+                              activeClicked(user.id, false);
+                            }}
+                          >
                             Active
                           </Button>
                         ) : (
-                          <Button variant={'outlined'} size={'small'} disabled>
+                          <Button
+                            variant={'outlined'}
+                            size={'small'}
+                            sx={{ opacity: 0.4 }}
+                            onClick={() => {
+                              activeClicked(user.id, true);
+                            }}
+                          >
                             Inactive
                           </Button>
                         )}

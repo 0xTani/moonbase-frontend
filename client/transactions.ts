@@ -98,10 +98,10 @@ const testTransactions: Array<ITransaction> = [
 ];
 
 export function checkTransactions(transactions: Array<ITransaction>) {
-  const daiTransactionsToDaddy: Array<ITransaction> = transactions.filter((transaction: ITransaction) => {
+  const daiTransactionsToTreasury: Array<ITransaction> = transactions.filter((transaction: ITransaction) => {
     return transaction.to === MOONBASE_TREASURY_ADDRESS && transaction.contractAddress === ACCEPTED_TOKEN;
   });
-  const curatedTransactions = curateTransactions(daiTransactionsToDaddy);
+  const curatedTransactions = curateTransactions(daiTransactionsToTreasury);
   let isAccountActive = false;
   curatedTransactions.map((transaction: ITransactionCurated) => {
     const transactionTime = moment(transaction.timeStamp);
