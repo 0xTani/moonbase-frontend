@@ -14,6 +14,7 @@ import feathersClient from 'client';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import React from 'react';
+import Calendar from 'src/Components/Calendar';
 import { DEFAULT_NEW_USER_FORM } from 'src/Types/Constants';
 import { INewUserForm } from 'src/Types/TUser';
 
@@ -45,7 +46,11 @@ const Events: NextPage = () => {
           alignItems={'center'}
           justifyContent={'center'}
           sx={{ minHeight: '100vh', textAlign: 'center', paddingLeft: '250px' }}
-        ></Grid>
+        >
+          <Grid item lg={11} xl={11}>
+            <Calendar />
+          </Grid>
+        </Grid>
       </main>
     </>
   );
