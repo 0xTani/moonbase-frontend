@@ -55,12 +55,7 @@ const Register: NextPage = () => {
           {/* Alias */}
           <FormControl variant="outlined" fullWidth sx={{ marginBottom }}>
             <InputLabel htmlFor="outlined-adornment-ethaddress">Alias</InputLabel>
-            <OutlinedInput
-              onChange={handleChange('alias')}
-              value={newUser.alias}
-              id="register-username"
-              label="Alias"
-            />
+            <OutlinedInput onChange={handleChange('alias')} value={newUser.alias} id="register-alias" label="Alias" />
             <FormHelperText>Alias - Can be blank</FormHelperText>
           </FormControl>
 
@@ -70,7 +65,7 @@ const Register: NextPage = () => {
             <OutlinedInput
               onChange={handleChange('twitter')}
               value={newUser.twitter}
-              id="register-username"
+              id="register-twitter"
               label="Twitter"
             />
             <FormHelperText>Twitter - Can be blank</FormHelperText>
@@ -82,7 +77,7 @@ const Register: NextPage = () => {
             <OutlinedInput
               onChange={handleChange('telegram')}
               value={newUser.telegram}
-              id="register-username"
+              id="register-telegram"
               label="Alias"
             />
             <FormHelperText>Telegram - Can be blank</FormHelperText>

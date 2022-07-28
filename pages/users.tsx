@@ -89,8 +89,8 @@ const Users: NextPage = () => {
                   <TableRow>
                     <TableCell>Username</TableCell>
                     <TableCell align="center">Status</TableCell>
-                    <TableCell align="center">Twitter</TableCell>
-                    <TableCell align="center">Telegram</TableCell>
+                    <TableCell align="left">Twitter</TableCell>
+                    <TableCell align="left">Telegram</TableCell>
                     <TableCell align="left">Badges</TableCell>
                   </TableRow>
                 </TableHead>
@@ -111,8 +111,8 @@ const Users: NextPage = () => {
                           </Button>
                         )}
                       </TableCell>
-                      <TableCell align="right"></TableCell>
-                      <TableCell align="right"></TableCell>
+                      <TableCell align="left">{user.twitter}</TableCell>
+                      <TableCell align="left">{user.telegram}</TableCell>
                       <TableCell align="left">{displayBadges(user.badges)}</TableCell>
                     </TableRow>
                   ))}
