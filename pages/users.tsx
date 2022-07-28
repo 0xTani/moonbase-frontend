@@ -1,5 +1,6 @@
 import {
   Button,
+  Divider,
   Grid,
   Paper,
   styled,
@@ -12,6 +13,7 @@ import {
   Tooltip,
   tooltipClasses,
   TooltipProps,
+  Typography,
 } from '@mui/material';
 import feathersClient from 'client';
 import { NextPage } from 'next';
@@ -32,28 +34,28 @@ const Users: NextPage = () => {
 
   function displayBadges(userBadgesString: string) {
     return Users.getUserBadges(userBadgesString).map(b => (
-      <Button variant="outlined" size="small" color={b.color} sx={{ marginLeft: '10px' }}>
-        {b.name}
-      </Button>
+      <HtmlTooltip
+        title={
+          <React.Fragment>
+            <Typography color="inherit">{b.name}</Typography>
+            <p>{b.definition}</p>
+          </React.Fragment>
+        }
+      >
+        <Button variant="outlined" size="small" color={b.color} sx={{ marginLeft: '10px' }}>
+          {b.name}
+        </Button>
+      </HtmlTooltip>
     ));
-  }
-
-  function patchUser() {
-    feathersClient.service('users').patch(3, { badges: [2, 6] });
-    console.log('users.tsx: ', Users.users);
-  }
-  function patchUser1() {
-    feathersClient.service('users').patch(3, { badges: [1, 2, 6] });
   }
 
   const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))(({ theme }) => ({
     [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: '#f5f5f9',
-      color: 'rgba(0, 0, 0, 0.87)',
-      maxWidth: 220,
-      fontSize: theme.typography.pxToRem(12),
+      backgroundColor: '#001e3c',
+      maxWidth: 320,
+      fontSize: theme.typography.pxToRem(14),
       border: '1px solid #dadde9',
     },
   }));
@@ -117,8 +119,6 @@ const Users: NextPage = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            <Button onClick={patchUser1}> Patch user 1 2 6</Button>
-            <Button onClick={patchUser}> Patch user 2 6</Button>
           </Grid>
         </Grid>
       </main>
