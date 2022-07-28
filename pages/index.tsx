@@ -45,7 +45,7 @@ const Home: NextPage = () => {
       if (result) {
         User.setUser!(result.user);
         User.setAuthentication!(result.authentication);
-        Users.fetchUsers();
+        Users.fetchUsers('index');
       }
       // @todo error typing
     } catch (error: any) {

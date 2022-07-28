@@ -10,7 +10,7 @@ export interface IUsersContext {
   users: Array<IUser>;
   setUser: (user: IUser) => void;
   clearUsers: () => void;
-  fetchUsers: () => void;
+  fetchUsers: (from: string) => void;
   getUserBadges: (badgeIdArray: string) => Array<IBadge>;
   getBadgesAdmin: (badgeIdArray: string) => Array<IBadgeDisplay>;
 }
@@ -28,7 +28,7 @@ export const UsersContext = createContext<IUsersContext>({
   users: [],
   setUser: (user: IUser) => {},
   clearUsers: () => {},
-  fetchUsers: () => {},
+  fetchUsers: (from: string) => {},
   getUserBadges: (badgeIdArray: string) => [],
   getBadgesAdmin: (badgeIdArray: string) => [],
 });
@@ -73,8 +73,6 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
   //   todo optimize
   function getBadgesAdmin(badgeIdJsonString: string): Array<IBadgeDisplay> {
     let formattedBadges: Array<IBadgeDisplay> = [];
-
-    console.log('badges users context:', badges);
     badges.forEach(badge => {
       let displayBadge: IBadgeDisplay = {
         id: badge.id,
@@ -107,7 +105,6 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
   }
 
   function setUser2(user: IUser) {
-    console.log('--------------- users ----------', users);
     const a: IUser[] = [DEFAULT_USER, DEFAULT_USER];
 
     console.log(
@@ -140,18 +137,18 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
       });
   }
 
-  function fetchUsers() {
+  function fetchUsers(from: string) {
+    if (isDev) console.log('users fetched ', from);
+
     feathersClient
       .service('badge')
       .find()
       .then((badges: any) => {
-        if (isDev) console.log('badges fetched ', badges.data);
         setBadges(badges.data);
         feathersClient
           .service('users')
           .find()
           .then((users: any) => {
-            if (isDev) console.log('users fetched ', users.data);
             setUsers(users.data);
             setListeners();
           });

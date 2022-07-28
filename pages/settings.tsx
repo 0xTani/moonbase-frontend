@@ -66,6 +66,15 @@ const Settings: NextPage = () => {
     }
   }
 
+  function changePassword() {
+    feathersClient
+      .service('users')
+      .patch(User.user.id, { password: values.password })
+      .then((u: any) => {
+        setValues({ ...values, password: '', repeatPassword: '' });
+      });
+  }
+
   function linkAddress() {}
   function saveFobId() {
     feathersClient
@@ -171,6 +180,9 @@ const Settings: NextPage = () => {
             />
           </FormControl>
           <Button
+            onClick={() => {
+              changePassword();
+            }}
             disabled={
               values.password === '' || values.repeatPassword === '' || values.password !== values.repeatPassword
             }

@@ -25,12 +25,11 @@ import { capitalizeFirst } from 'src/Types/helpers';
 const Users: NextPage = () => {
   const Users = useUsers();
 
-  useEffect(() => {
-    window.addEventListener('load', function () {
-      console.log('calledddddddddddddddddddddd');
-      Users.fetchUsers();
-    });
-  });
+  // useEffect(() => {
+  //   window.addEventListener('load', function () {
+  //     Users.fetchUsers('users');
+  //   });
+  // });
 
   function displayBadges(userBadgesString: string) {
     return Users.getUserBadges(userBadgesString).map(b => (

@@ -2,8 +2,7 @@ import { Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, Table
 import feathersClient from 'client';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import React, { useEffect } from 'react';
-import { isUserIdInArray } from 'src/context/UsersContext';
+import React from 'react';
 import { useUsers } from 'src/Hooks/useUsers';
 import { capitalizeFirst } from 'src/Types/helpers';
 import { IBadgeDisplay } from 'src/Types/TUser';
@@ -11,11 +10,11 @@ import { IBadgeDisplay } from 'src/Types/TUser';
 const Admin: NextPage = () => {
   const Users = useUsers();
 
-  useEffect(() => {
-    window.addEventListener('load', function () {
-      Users.fetchUsers();
-    });
-  });
+  // useEffect(() => {
+  //   window.addEventListener('load', function () {
+  //     Users.fetchUsers('admin');
+  //   });
+  // });
 
   function badgeClicked(badge: IBadgeDisplay, userBadgesString: string, userId: number) {
     let newUserBadges = JSON.parse(userBadgesString);
@@ -30,7 +29,6 @@ const Admin: NextPage = () => {
 
   function displayBadges(userBadgesString: string, userId: number) {
     // const allBadges = Users.
-    console.log('display badges', Users.getBadgesAdmin(userBadgesString));
 
     return Users.getBadgesAdmin(userBadgesString).map(badge => (
       <Button
@@ -83,7 +81,10 @@ const Admin: NextPage = () => {
                 </TableHead>
                 <TableBody>
                   {Users.users.map(user => (
-                    <TableRow key={user.id + user.fobId!} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableRow
+                      key={user.id + user.fobId! + Math.floor(Math.random())}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
                       <TableCell component="th" scope="row">
                         {capitalizeFirst(user.username)}
                       </TableCell>
