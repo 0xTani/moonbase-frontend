@@ -18,34 +18,32 @@ export default class Calendar extends React.Component<{}, DemoAppState> {
 
   render() {
     return (
-      <div className="demo-app">
-        <div className="demo-app-main">
-          <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            headerToolbar={{
-              left: 'prev,next today',
-              center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay',
-            }}
-            initialView="dayGridMonth"
-            editable={true}
-            selectable={true}
-            selectMirror={true}
-            dayMaxEvents={true}
-            weekends={this.state.weekendsVisible}
-            initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
-            select={this.handleDateSelect}
-            eventContent={renderEventContent} // custom render function
-            eventClick={this.handleEventClick}
-            eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
-            /* you can update a remote database when these fire:
+      <FullCalendar
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        headerToolbar={{
+          left: 'prev,next today',
+          center: 'title',
+          right: 'timeGridWeek',
+        }}
+        initialView="timeGridWeek"
+        editable={true}
+        slotMinTime={'08:00:00'}
+        slotMaxTime={'24:00:00'}
+        selectable={true}
+        selectMirror={true}
+        dayMaxEvents={true}
+        weekends={this.state.weekendsVisible}
+        initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
+        select={this.handleDateSelect}
+        eventContent={renderEventContent} // custom render function
+        eventClick={this.handleEventClick}
+        eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
+        /* you can update a remote database when these fire:
             eventAdd={function(){}}
             eventChange={function(){}}
             eventRemove={function(){}}
             */
-          />
-        </div>
-      </div>
+      />
     );
   }
 
