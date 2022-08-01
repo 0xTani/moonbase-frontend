@@ -3,11 +3,8 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import React from 'react';
 import Calendar from 'src/Components/Calendar';
-import { useEvent } from 'src/Hooks/useEvents';
 
 const Events: NextPage = () => {
-  const Events = useEvent();
-
   return (
     <>
       <Head>
@@ -25,10 +22,7 @@ const Events: NextPage = () => {
           sx={{ minHeight: '100vh', textAlign: 'center', paddingLeft: '250px' }}
         >
           <Grid item lg={11} xl={11}>
-            <>
-              {Events.events.toString}
-              <Calendar />
-            </>
+            <Calendar />
           </Grid>
         </Grid>
       </main>
