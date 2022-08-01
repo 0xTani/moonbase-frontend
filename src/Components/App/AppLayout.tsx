@@ -8,12 +8,14 @@ import { IUser } from 'src/Types/TUser';
 import { isDev } from 'src/Types/helpers';
 import { useUsers } from 'src/Hooks/useUsers';
 import { useEvent } from 'src/Hooks/useEvents';
+import { useOrganization } from 'src/Hooks/useOrganization';
 
 const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const User = useUser();
   const Users = useUsers();
   const router = useRouter();
   const Events = useEvent();
+  const Organization = useOrganization();
   // re authenticates user on window reload
   let isLoaded = false;
 
@@ -34,6 +36,7 @@ const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
             Users.initializeUsers('app layoutttt');
             User.setAuthentication!(result.authentication);
             Events.initializeEvents();
+            Organization.initializeOrganizations();
           })
           .catch(e => {
             router.push('/');

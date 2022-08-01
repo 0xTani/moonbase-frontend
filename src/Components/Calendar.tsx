@@ -13,6 +13,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { INITIAL_EVENTS, createEventId } from './event-utils';
 import { useEvent } from 'src/Hooks/useEvents';
+import { Box, Typography } from '@mui/material';
 
 interface DemoAppState {
   weekendsVisible: boolean;
@@ -35,7 +36,7 @@ function renderEventContent(eventContent: EventContentArg) {
   return (
     <>
       <b>{eventContent.timeText}</b>
-      <i>{eventContent.event.title}</i>
+      <i> {eventContent.event.title}</i>
     </>
   );
 }

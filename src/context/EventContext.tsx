@@ -3,20 +3,6 @@ import feathersClient from 'client';
 import React, { createContext, ReactNode } from 'react';
 import { FC } from 'react';
 
-let todayStr = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of today
-// const INITIAL_EVENTS = [
-//   {
-//     id: '0',
-//     title: 'All-day event',
-//     start: todayStr,
-//   },
-//   {
-//     id: '1',
-//     title: 'Event from context',
-//     start: todayStr + 'T12:00:00',
-//   },
-// ];
-
 // @todo helps know what is in an event, remove in prod
 interface TEvent extends EventInput {}
 const event1: TEvent = {};
@@ -60,7 +46,6 @@ export const EventProvider: FC<{ children: ReactNode }> = props => {
   const EventService = feathersClient.service('event');
 
   function addEvent(event: IEventNew) {
-    console.log('fuck yeah', event);
     EventService.create(event);
   }
 
@@ -69,9 +54,7 @@ export const EventProvider: FC<{ children: ReactNode }> = props => {
   }
 
   function fetchEvents() {
-    console.log('fetchEvents');
     EventService.find().then((events: IEventResponse) => {
-      console.log(events);
       setEvents(events.data);
     });
   }
