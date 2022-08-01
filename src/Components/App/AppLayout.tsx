@@ -7,11 +7,13 @@ import { useRouter } from 'next/router';
 import { IUser } from 'src/Types/TUser';
 import { isDev } from 'src/Types/helpers';
 import { useUsers } from 'src/Hooks/useUsers';
+import { useEvent } from 'src/Hooks/useEvents';
 
 const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const User = useUser();
   const Users = useUsers();
   const router = useRouter();
+  const Events = useEvent();
   // re authenticates user on window reload
   let isLoaded = false;
 
@@ -29,8 +31,9 @@ const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
               .then((user: IUser) => {
                 User.initUser!(user);
               });
-            Users.fetchUsers('app layout');
+            Users.initializeUsers('app layoutttt');
             User.setAuthentication!(result.authentication);
+            Events.initializeEvents();
           })
           .catch(e => {
             router.push('/');

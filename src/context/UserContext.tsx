@@ -7,6 +7,12 @@ import { DEFAULT_AUTHENTICATION as AUTHENTICATION_DEFAULT, DEFAULT_USER } from '
 import { isDev } from 'src/Types/helpers';
 import { IAuthentication, IMembercardData, IUser } from 'src/Types/TUser';
 
+export const MEMBERCARD_DATA_DEFAULT: IMembercardData = {
+  id: null,
+  tokenUriUrl: '',
+  tokenUriJson: null,
+};
+
 export interface IUserContext {
   user: IUser;
   setUser?: React.Dispatch<React.SetStateAction<IUser>>;
@@ -18,12 +24,6 @@ export interface IUserContext {
   logout: () => void;
   initUser: (user: IUser) => void;
 }
-
-export const MEMBERCARD_DATA_DEFAULT: IMembercardData = {
-  id: null,
-  tokenUriUrl: '',
-  tokenUriJson: null,
-};
 
 export const UserContext = createContext<IUserContext>({
   user: DEFAULT_USER,

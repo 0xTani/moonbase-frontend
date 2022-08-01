@@ -13,20 +13,23 @@ import AppLayout from 'src/Components/App/AppLayout';
 import { UsersProvider } from 'src/context/UsersContext';
 
 import './main.css';
+import { EventProvider } from 'src/context/EventContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <UsersProvider>
       <UserProvider>
-        <ThemeProvider theme={darkTheme}>
-          <CssBaseline>
-            <WagmiConfig client={wagmiClient}>
-              <AppLayout>
-                <Component {...pageProps} />
-              </AppLayout>
-            </WagmiConfig>
-          </CssBaseline>
-        </ThemeProvider>
+        <EventProvider>
+          <ThemeProvider theme={darkTheme}>
+            <CssBaseline>
+              <WagmiConfig client={wagmiClient}>
+                <AppLayout>
+                  <Component {...pageProps} />
+                </AppLayout>
+              </WagmiConfig>
+            </CssBaseline>
+          </ThemeProvider>
+        </EventProvider>
       </UserProvider>
     </UsersProvider>
   );

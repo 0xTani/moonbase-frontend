@@ -15,11 +15,13 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import React from 'react';
 import Calendar from 'src/Components/Calendar';
+import { useEvent } from 'src/Hooks/useEvents';
 import { DEFAULT_NEW_USER_FORM } from 'src/Types/Constants';
 import { INewUserForm } from 'src/Types/TUser';
 
 const Events: NextPage = () => {
   const [newUser, setNewUser] = React.useState<INewUserForm>(DEFAULT_NEW_USER_FORM);
+  const Events = useEvent();
 
   const handleChange = (prop: keyof INewUserForm) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewUser({ ...newUser, [prop]: event.target.value });
@@ -48,7 +50,10 @@ const Events: NextPage = () => {
           sx={{ minHeight: '100vh', textAlign: 'center', paddingLeft: '250px' }}
         >
           <Grid item lg={11} xl={11}>
-            <Calendar />
+            <>
+              {Events.events.toString}
+              <Calendar />
+            </>
           </Grid>
         </Grid>
       </main>

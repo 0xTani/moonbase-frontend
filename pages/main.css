@@ -1,3 +1,7 @@
 .fc-theme-standard {
   max-height: 950px !important;
 }
+
+.fc-scrollgrid {
+  background-color: rgba(101, 136, 252, 0.288);
+}

@@ -11,7 +11,7 @@ export interface IUsersContext {
   users: Array<IUser>;
   setUser: (user: IUser) => void;
   clearUsers: () => void;
-  fetchUsers: (from: string) => void;
+  initializeUsers: (from: string) => void;
   getUserBadges: (badgeIdArray: string) => Array<IBadge>;
   getBadgesAdmin: (badgeIdArray: string) => Array<IBadgeDisplay>;
 }
@@ -29,7 +29,7 @@ export const UsersContext = createContext<IUsersContext>({
   users: [],
   setUser: (user: IUser) => {},
   clearUsers: () => {},
-  fetchUsers: (from: string) => {},
+  initializeUsers: (from: string) => {},
   getUserBadges: (badgeIdArray: string) => [],
   getBadgesAdmin: (badgeIdArray: string) => [],
 });
@@ -43,13 +43,13 @@ function indexOfUser(users: IUser[], user: IUser): number {
       }
     }
   }
-
   return index;
 }
 
 export const UsersProvider: FC<{ children: ReactNode }> = props => {
   const [users, setUsers] = React.useState<IUser[]>([]);
   const [badges, setBadges] = React.useState<IBadge[]>([]);
+  const UserService = feathersClient.service('users');
 
   //   useEffect(() => {
   //     console.warn('there is no god', users);
@@ -105,19 +105,19 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
     return formattedBadges;
   }
 
-  function setUser2(user: IUser) {
-    const a: IUser[] = [DEFAULT_USER, DEFAULT_USER];
+  // const a: IUser[] = [DEFAULT_USER, DEFAULT_USER];
 
-    console.log(
-      a.reduce(
-        (prev, cur) => ({
-          ...prev,
-          [cur.id]: cur,
-        }),
-        {},
-      ),
-    );
+  // console.log(
+  //   a.reduce(
+  //     (prev, cur) => ({
+  //       ...prev,
+  //       [cur.id]: cur,
+  //     }),
+  //     {},
+  //   ),
+  // );
 
+  function fetchAndSetUsers() {
     feathersClient
       .service('users')
       .find()
@@ -128,25 +128,29 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
 
   let usersPatchedListener: any = null;
   let usersCreatedListener: any = null;
+  let usersRemovedListener: any = null;
 
   //   @todo patch individual user
   function setListeners() {
     console.log('setListeners users', users);
     if (!usersPatchedListener)
-      usersPatchedListener = feathersClient.service('users').on('patched', (user: IUser) => {
-        setUser2(user);
+      usersPatchedListener = UserService.on('patched', () => {
+        fetchAndSetUsers();
       });
 
     if (!usersCreatedListener)
-      usersCreatedListener = feathersClient.service('users').on('created', (user: IUser) => {
-        // setUser(user)
-        setUser2(user);
+      usersCreatedListener = UserService.on('created', () => {
+        fetchAndSetUsers();
+      });
+
+    if (!usersRemovedListener)
+      usersRemovedListener = UserService.on('created', () => {
+        fetchAndSetUsers();
       });
   }
 
-  function fetchUsers(from: string) {
+  function initializeUsers(from: string) {
     if (isDev) console.log('users fetched ', from);
-
     feathersClient
       .service('badge')
       .find()
@@ -167,7 +171,7 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
   }
 
   return (
-    <UsersContext.Provider value={{ users, setUser, clearUsers, fetchUsers, getUserBadges, getBadgesAdmin }}>
+    <UsersContext.Provider value={{ users, setUser, clearUsers, initializeUsers, getUserBadges, getBadgesAdmin }}>
       {props.children}
     </UsersContext.Provider>
   );
