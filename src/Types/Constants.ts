@@ -1,4 +1,4 @@
-import { IAuthentication, INewUser, INewUserForm, IUser } from './TUser';
+import { IAuthentication, INewUserForm, IUser } from './TUser';
 
 export const DEFAULT_AUTHENTICATION: IAuthentication = {
   accessToken: null,

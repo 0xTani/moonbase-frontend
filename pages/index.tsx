@@ -78,7 +78,7 @@ const Home: NextPage = () => {
       if (result) {
         User.initUser!(result.user);
         User.setAuthentication!(result.authentication);
-        Users.fetchUsers('index');
+        Users.initializeUsers('index');
       }
       // @todo error typing
     } catch (error: any) {

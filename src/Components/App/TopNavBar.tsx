@@ -14,7 +14,7 @@ export function TopNavBar() {
       <Toolbar>
         <Box sx={{ flexGrow: 1 }}>
           <Button onClick={() => router.push('/')} variant="text">
-            Moonbase Station
+            YVR HUB
           </Button>
         </Box>
 

@@ -4,15 +4,7 @@ import { useUser } from 'src/Hooks/useUser';
 import { useEffect } from 'react';
 import { useAccount, useConnect, useEnsName, useDisconnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
-
-function addressShorten(address: string | undefined) {
-  if (address) {
-    const REGEX_ADDRESSIFY = /^(0x[a-zA-Z0-9]{3})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/;
-    const match = address.match(REGEX_ADDRESSIFY);
-    if (!match) return address;
-    return `${match[1]}…${match[2]}`;
-  } else return undefined;
-}
+import { addressShorten } from 'src/Types/helpers';
 
 export function AccountButton() {
   const User = useUser();

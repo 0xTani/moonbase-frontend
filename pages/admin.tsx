@@ -4,9 +4,8 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import React from 'react';
 import { useUsers } from 'src/Hooks/useUsers';
-import { DEFAULT_NEW_USER_FORM } from 'src/Types/Constants';
 import { capitalizeFirst } from 'src/Types/helpers';
-import { IBadgeDisplay, INewUserForm } from 'src/Types/TUser';
+import { IBadgeDisplay } from 'src/Types/TUser';
 
 const Admin: NextPage = () => {
   const Users = useUsers();
