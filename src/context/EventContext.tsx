@@ -9,17 +9,28 @@ import { IUser } from 'src/Types/TUser';
 interface TEvent extends EventInput {}
 const event1: TEvent = {};
 
-interface IEvent {
+export interface IEvent {
   id: string;
   title: string;
   start: string;
   end?: string;
+  message: string;
   backgroundColor: string;
   url: string;
   organizationId: number;
 }
 
-type IEventNew = Omit<IEvent, 'id'>;
+export type IEventNew = Omit<IEvent, 'id'>;
+
+export const EVENT_NEW_BLANK: IEventNew = {
+  title: '',
+  start: '',
+  end: '',
+  message: '',
+  backgroundColor: '#3788d8',
+  url: '',
+  organizationId: -1,
+};
 
 interface IEventResponse {
   data: IEvent[];
@@ -31,7 +42,7 @@ interface IEventResponse {
 export interface IEventContext {
   events: Array<IEvent>;
   setEvents?: React.Dispatch<React.SetStateAction<IEvent[]>>;
-  addEvent?: (event: IEventNew) => void;
+  addEvent: (event: IEventNew) => void;
   removeEvent: (eventId: number) => void;
   initializeEvents: () => void;
   eventsFiltered: (idArray: number[]) => Array<IEvent>;
@@ -51,7 +62,7 @@ export const EventProvider: FC<{ children: ReactNode }> = props => {
   const EventService = feathersClient.service('event');
 
   function addEvent(event: IEventNew) {
-    EventService.create(event);
+    EventService.create(event).then(console.log('ok'));
   }
 
   function removeEvent(eventId: number) {
@@ -67,7 +78,6 @@ export const EventProvider: FC<{ children: ReactNode }> = props => {
   function eventsFiltered(idArray: number[]) {
     let eventsList: IEvent[] = [];
     events.map((ev: IEvent) => {
-      console.log('eventid');
       if (isIdInArray(ev.organizationId, idArray)) eventsList.push(ev);
     });
 

@@ -6,6 +6,24 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { useEvent } from 'src/Hooks/useEvents';
 import { useUser } from 'src/Hooks/useUser';
 import { arrayStringParse } from 'src/Types/helpers';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  InputLabel,
+  Modal,
+  OutlinedInput,
+  Typography,
+} from '@mui/material';
+import { EVENT_NEW_BLANK, IEventNew } from 'src/context/EventContext';
+import { useOrganization } from 'src/Hooks/useOrganization';
+import { IOrganization } from 'src/context/OrganizationContext';
 
 function renderEventContent(eventContent: EventContentArg) {
   return (
@@ -19,6 +37,33 @@ function renderEventContent(eventContent: EventContentArg) {
 const Calendar: FC = () => {
   const Events = useEvent();
   const User = useUser();
+  const Organization = useOrganization();
+  const [newEvent, setNewEvent] = React.useState<IEventNew>(EVENT_NEW_BLANK);
+
+  const OrganizationSelector = () => {
+    const orgButtons = Organization.organizations.map((og: IOrganization) => {
+      return (
+        <FormControlLabel
+          control={<Checkbox />}
+          sx={{
+            userSelect: 'none',
+            backgroundColor: og.backgroundColor,
+            paddingRight: '12px',
+            marginRight: '35px',
+            borderRadius: '5px',
+          }}
+          checked={parseInt(og.id) === newEvent.organizationId}
+          label={og.name}
+          onChange={() => {
+            setNewEvent({ ...newEvent, organizationId: parseInt(og.id), backgroundColor: og.backgroundColor });
+          }}
+        />
+      );
+    });
+
+    return <Box> {orgButtons} </Box>;
+  };
+
   const handleEventClick = (clickInfo: EventClickArg) => {
     if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
       Events.removeEvent(parseInt(clickInfo.event.id));
@@ -26,51 +71,127 @@ const Calendar: FC = () => {
   };
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
-    let title = 'Testo';
     let calendarApi = selectInfo.view.calendar;
+
+    setNewEvent({
+      ...newEvent,
+      start: selectInfo.startStr,
+      end: selectInfo.endStr,
+      organizationId: parseInt(Organization.organizations[0].id),
+      backgroundColor: Organization.organizations[0].backgroundColor,
+    });
 
     calendarApi.unselect(); // clear date selection
     console.log('before add', Events.events);
-    if (title) {
-      console.log('after if');
-      console.log(Events.addEvent);
-      Events.addEvent?.({
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        // allDay: selectInfo.allDay,
-        // @todo organization color, URL
-        organizationId: 3,
-        backgroundColor: '#6447cc',
-        url: '',
-      });
-      console.log('after add', Events.events);
-    }
+
+    // Events.addEvent?.({
+    //   title,
+    //   start: selectInfo.startStr,
+    //   end: selectInfo.endStr,
+    //   // allDay: selectInfo.allDay,
+    //   // @todo organization color, URL
+    //   organizationId: 3,
+    //   backgroundColor: '#6447cc',
+    //   url: '',
+    // });
   };
 
+  const handleChange = (prop: keyof IEventNew) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewEvent({ ...newEvent, [prop]: event.target.value });
+  };
+
+  const addEventModal = (
+    <Modal
+      open={newEvent.organizationId !== -1}
+      onClose={() => setNewEvent(EVENT_NEW_BLANK)}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Grid container justifyContent={'center'} alignItems={'center'} sx={{ minHeight: '100vh' }}>
+        <Grid item md={4}>
+          <Card>
+            <CardContent>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                New Event
+              </Typography>
+            </CardContent>
+            <Divider />
+            <CardContent sx={{ textAlign: 'center' }}>
+              <FormControl variant="outlined" fullWidth sx={{ marginBottom: '2rem' }}>
+                <InputLabel htmlFor="input-title">Title</InputLabel>
+                <OutlinedInput
+                  autoComplete="off"
+                  id="input-title"
+                  value={newEvent.title}
+                  onChange={handleChange('title')}
+                  label="Title"
+                />
+              </FormControl>
+
+              <FormControl variant="outlined" fullWidth sx={{ marginBottom: '2rem' }}>
+                <InputLabel htmlFor="input-url">Url</InputLabel>
+                <OutlinedInput
+                  autoComplete="off"
+                  id="input-url"
+                  value={newEvent.url}
+                  onChange={handleChange('url')}
+                  label="url"
+                />
+              </FormControl>
+
+              <FormControl variant="outlined" fullWidth sx={{ marginBottom: '2rem' }}>
+                <InputLabel htmlFor="input-message">Message</InputLabel>
+                <OutlinedInput
+                  multiline
+                  autoComplete="off"
+                  id="input-message"
+                  value={newEvent.message}
+                  onChange={handleChange('message')}
+                  label="Message"
+                />
+              </FormControl>
+
+              {OrganizationSelector()}
+              <Button
+                onClick={() => {
+                  Events.addEvent(newEvent);
+                }}
+              >
+                Add event
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Modal>
+  );
+
   return (
-    <FullCalendar
-      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-      headerToolbar={{
-        left: 'prev,next today',
-        center: 'title',
-        right: 'timeGridWeek',
-      }}
-      initialView="timeGridWeek"
-      editable={true}
-      slotMinTime={'08:00:00'}
-      slotMaxTime={'24:00:00'}
-      selectable={true}
-      selectMirror={true}
-      dayMaxEvents={true}
-      events={Events.eventsFiltered(arrayStringParse(User.user.organizationsSelected))}
-      select={handleDateSelect}
-      eventContent={renderEventContent} // custom render function
-      eventClick={handleEventClick}
-      /* @todo event change
+    <>
+      {addEventModal}
+      <FullCalendar
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        headerToolbar={{
+          left: 'prev,next today',
+          center: 'title',
+          right: 'timeGridWeek',
+        }}
+        initialView="timeGridWeek"
+        editable={true}
+        slotMinTime={'08:00:00'}
+        slotMaxTime={'24:00:00'}
+        selectable={true}
+        selectMirror={true}
+        dayMaxEvents={true}
+        events={Events.eventsFiltered(arrayStringParse(User.user.organizationsSelected))}
+        select={handleDateSelect}
+        eventContent={renderEventContent} // custom render function
+        eventClick={handleEventClick}
+        /* @todo event change
             eventChange={function(){}}
             */
-    />
+      />
+    </>
   );
 };
 
