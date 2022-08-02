@@ -38,6 +38,8 @@ export interface IOrganizationContext {
     userOrganizationsList: number[],
     userSelectedOrganizationsList: number[],
   ) => IOrganizationSelected[];
+  adminMode: boolean;
+  setAdminMode: (mode: boolean) => void;
 }
 
 export const OrganizationContext = createContext<IOrganizationContext>({
@@ -47,11 +49,18 @@ export const OrganizationContext = createContext<IOrganizationContext>({
   removeOrganization: (organizationId: number) => {},
   initializeOrganizations: () => {},
   getOrganizationsSelected: (userOrganizationsList: number[], userSelectedOrganizationsList: number[]) => [],
+  adminMode: false,
+  setAdminMode: (mode: boolean) => {},
 });
 
 export const OrganizationProvider: FC<{ children: ReactNode }> = props => {
   const [organizations, setOrganizations] = React.useState<IOrganization[]>([]);
   const OrganizationService = feathersClient.service('organization');
+  const [adminMode, setAdminModeState] = React.useState<boolean>(true);
+
+  function setAdminMode(mode: boolean) {
+    setAdminModeState(mode);
+  }
 
   function addOrganization(organization: IOrganizationNew) {
     OrganizationService.create(organization);
@@ -107,6 +116,8 @@ export const OrganizationProvider: FC<{ children: ReactNode }> = props => {
         removeOrganization,
         initializeOrganizations,
         getOrganizationsSelected,
+        adminMode,
+        setAdminMode,
       }}
     >
       {props.children}

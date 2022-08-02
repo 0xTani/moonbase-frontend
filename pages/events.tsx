@@ -11,6 +11,30 @@ import { arrayStringParse } from 'src/Types/helpers';
 const Events: NextPage = () => {
   const Organization = useOrganization();
   const User = useUser();
+  const isAdmin = true;
+
+  const AdminModeToggle = () => {
+    if (isAdmin) {
+      return (
+        <FormControlLabel
+          control={<Checkbox />}
+          sx={{
+            userSelect: 'none',
+            backgroundColor: 'green',
+            paddingRight: '12px',
+            marginRight: '35px',
+            borderRadius: '5px',
+            marginTop: '1rem',
+          }}
+          checked={Organization.adminMode}
+          label="Admin mode"
+          onChange={() => {
+            Organization.setAdminMode(!Organization.adminMode);
+          }}
+        />
+      );
+    } else return <></>;
+  };
 
   const OrganizationSelector = () => {
     const orgButtons = Organization.getOrganizationsSelected(
@@ -37,7 +61,11 @@ const Events: NextPage = () => {
       );
     });
 
-    return <Box> {orgButtons} </Box>;
+    return (
+      <Box>
+        {AdminModeToggle()} {orgButtons}
+      </Box>
+    );
   };
 
   return (

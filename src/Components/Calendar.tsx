@@ -40,6 +40,34 @@ const Calendar: FC = () => {
   const Organization = useOrganization();
   const [newEvent, setNewEvent] = React.useState<IEventNew>(EVENT_NEW_BLANK);
 
+  const handleEventClick = (clickInfo: EventClickArg) => {
+    if (Organization.adminMode) {
+      clickInfo.jsEvent.preventDefault();
+      if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
+        Events.removeEvent(parseInt(clickInfo.event.id));
+      }
+    }
+  };
+
+  const handleDateSelect = (selectInfo: DateSelectArg) => {
+    let calendarApi = selectInfo.view.calendar;
+    if (Organization.adminMode) {
+      setNewEvent({
+        ...newEvent,
+        start: selectInfo.startStr,
+        end: selectInfo.endStr,
+        organizationId: parseInt(Organization.organizations[0].id),
+        backgroundColor: Organization.organizations[0].backgroundColor,
+      });
+      calendarApi.unselect(); // clear date selection
+      console.log('before add', Events.events);
+    }
+  };
+
+  const handleChange = (prop: keyof IEventNew) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewEvent({ ...newEvent, [prop]: event.target.value });
+  };
+
   const OrganizationSelector = () => {
     const orgButtons = Organization.organizations.map((og: IOrganization) => {
       return (
@@ -61,43 +89,7 @@ const Calendar: FC = () => {
       );
     });
 
-    return <Box> {orgButtons} </Box>;
-  };
-
-  const handleEventClick = (clickInfo: EventClickArg) => {
-    if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-      Events.removeEvent(parseInt(clickInfo.event.id));
-    }
-  };
-
-  const handleDateSelect = (selectInfo: DateSelectArg) => {
-    let calendarApi = selectInfo.view.calendar;
-
-    setNewEvent({
-      ...newEvent,
-      start: selectInfo.startStr,
-      end: selectInfo.endStr,
-      organizationId: parseInt(Organization.organizations[0].id),
-      backgroundColor: Organization.organizations[0].backgroundColor,
-    });
-
-    calendarApi.unselect(); // clear date selection
-    console.log('before add', Events.events);
-
-    // Events.addEvent?.({
-    //   title,
-    //   start: selectInfo.startStr,
-    //   end: selectInfo.endStr,
-    //   // allDay: selectInfo.allDay,
-    //   // @todo organization color, URL
-    //   organizationId: 3,
-    //   backgroundColor: '#6447cc',
-    //   url: '',
-    // });
-  };
-
-  const handleChange = (prop: keyof IEventNew) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewEvent({ ...newEvent, [prop]: event.target.value });
+    return <Box>{orgButtons}</Box>;
   };
 
   const addEventModal = (
