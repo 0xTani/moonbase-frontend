@@ -1,10 +1,10 @@
 import feathersClient from 'client';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createContext, FC, ReactNode } from 'react';
 import { useUsers } from 'src/Hooks/useUsers';
 import { DEFAULT_AUTHENTICATION as AUTHENTICATION_DEFAULT, DEFAULT_USER } from 'src/Types/Constants';
-import { isDev } from 'src/Types/helpers';
+import { arrayStringParse } from 'src/Types/helpers';
 import { IAuthentication, IMembercardData, IUser } from 'src/Types/TUser';
 
 export const MEMBERCARD_DATA_DEFAULT: IMembercardData = {
@@ -22,6 +22,7 @@ export interface IUserContext {
   setMembercardData?: React.Dispatch<React.SetStateAction<IMembercardData>>;
   isAuthenticated: boolean;
   logout: () => void;
+  organizationChecked: (organizationId: number, currentChecked: boolean) => void;
   initUser: (user: IUser) => void;
 }
 
@@ -30,6 +31,7 @@ export const UserContext = createContext<IUserContext>({
   authentication: AUTHENTICATION_DEFAULT,
   isAuthenticated: false,
   membercardData: MEMBERCARD_DATA_DEFAULT,
+  organizationChecked: (organizationId: number, currentChecked: boolean) => {},
   logout: () => {},
   initUser: (user: IUser) => {},
 });
@@ -40,7 +42,6 @@ export const UserProvider: FC<{ children: ReactNode }> = props => {
 
   let usersPatchedListener = false;
   function setListeners() {
-    console.log('listeners settttt');
     if (!usersPatchedListener) {
       feathersClient.service('users').on('patched', (user: IUser) => {
         fetchUser();
@@ -73,6 +74,19 @@ export const UserProvider: FC<{ children: ReactNode }> = props => {
       router.push('/');
     });
   }
+
+  function organizationChecked(organizationId: number, currentSelected: boolean) {
+    let selectedArray = arrayStringParse(user.organizationsSelected);
+    if (currentSelected) {
+      selectedArray.splice(selectedArray.indexOf(organizationId), 1);
+    } else {
+      selectedArray.push(organizationId);
+    }
+    selectedArray.sort();
+
+    feathersClient.service('users').patch(user.id, { organizationsSelected: selectedArray });
+  }
+
   const [user, setUser] = React.useState<IUser>(DEFAULT_USER);
   const [authentication, setAuthentication] = React.useState<IAuthentication>(AUTHENTICATION_DEFAULT);
   const [membercardData, setMembercardData] = React.useState<IMembercardData>(MEMBERCARD_DATA_DEFAULT);
@@ -94,6 +108,7 @@ export const UserProvider: FC<{ children: ReactNode }> = props => {
         membercardData,
         setMembercardData,
         initUser,
+        organizationChecked,
       }}
     >
       {props.children}

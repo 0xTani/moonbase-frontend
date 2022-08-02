@@ -1,8 +1,9 @@
 import feathersClient from 'client';
 import React, { createContext, ReactNode } from 'react';
 import { FC } from 'react';
+import { isIdInArray } from 'src/Types/helpers';
 
-interface IOrganization {
+export interface IOrganization {
   id: string;
   name: string;
   telegramGroup: string;
@@ -12,6 +13,10 @@ interface IOrganization {
   pfp: string;
   backgroundColor: string;
   admins: string;
+}
+
+export interface IOrganizationSelected extends IOrganization {
+  selected: boolean;
 }
 
 type IOrganizationNew = Omit<IOrganization, 'id'>;
@@ -29,6 +34,10 @@ export interface IOrganizationContext {
   addOrganization?: (organization: IOrganizationNew) => void;
   removeOrganization: (organizationId: number) => void;
   initializeOrganizations: () => void;
+  getOrganizationsSelected: (
+    userOrganizationsList: number[],
+    userSelectedOrganizationsList: number[],
+  ) => IOrganizationSelected[];
 }
 
 export const OrganizationContext = createContext<IOrganizationContext>({
@@ -37,6 +46,7 @@ export const OrganizationContext = createContext<IOrganizationContext>({
   addOrganization: (organization: IOrganizationNew) => {},
   removeOrganization: (organizationId: number) => {},
   initializeOrganizations: () => {},
+  getOrganizationsSelected: (userOrganizationsList: number[], userSelectedOrganizationsList: number[]) => [],
 });
 
 export const OrganizationProvider: FC<{ children: ReactNode }> = props => {
@@ -57,24 +67,47 @@ export const OrganizationProvider: FC<{ children: ReactNode }> = props => {
     });
   }
 
+  function getOrganizationsSelected(userOrganizationsList: number[], userSelectedOrganizationsList: number[]) {
+    const userOrganizations: IOrganizationSelected[] = [];
+
+    organizations.map((og: IOrganization) => {
+      if (isIdInArray(parseInt(og.id), userOrganizationsList))
+        userOrganizations.push({ ...og, selected: isIdInArray(parseInt(og.id), userSelectedOrganizationsList) });
+    });
+    return userOrganizations;
+  }
+
+  let createdListener: any = null;
+  let patchedListener: any = null;
+  let removedListener: any = null;
+
   function initializeOrganizations() {
     fetchOrganizations();
-    OrganizationService.on('created', () => {
-      fetchOrganizations();
-    });
 
-    OrganizationService.on('patched', () => {
-      fetchOrganizations();
-    });
-
-    OrganizationService.on('removed', () => {
-      fetchOrganizations();
-    });
+    if (!createdListener)
+      createdListener = OrganizationService.on('created', () => {
+        fetchOrganizations();
+      });
+    if (!patchedListener)
+      patchedListener = OrganizationService.on('patched', () => {
+        fetchOrganizations();
+      });
+    if (!removedListener)
+      removedListener = OrganizationService.on('removed', () => {
+        fetchOrganizations();
+      });
   }
 
   return (
     <OrganizationContext.Provider
-      value={{ organizations, setOrganizations, addOrganization, removeOrganization, initializeOrganizations }}
+      value={{
+        organizations,
+        setOrganizations,
+        addOrganization,
+        removeOrganization,
+        initializeOrganizations,
+        getOrganizationsSelected,
+      }}
     >
       {props.children}
     </OrganizationContext.Provider>

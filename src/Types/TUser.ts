@@ -11,6 +11,7 @@ export interface IUser {
   active: number;
   badges: string;
   organizations: string;
+  organizationsSelected: string;
   monthsActive: number;
   pfp: string | null;
   createdAt?: string;
