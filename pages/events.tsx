@@ -26,7 +26,7 @@ const Events: NextPage = () => {
             paddingRight: '12px',
             marginRight: '35px',
             borderRadius: '5px',
-            marginBottom: '1rem',
+            marginTop: '1rem',
           }}
           checked={og.selected}
           label={og.name}
@@ -58,8 +58,8 @@ const Events: NextPage = () => {
         >
           <Grid item lg={11} xl={11}>
             <>
-              {OrganizationSelector()}
               <Calendar />
+              {OrganizationSelector()}
             </>
           </Grid>
         </Grid>

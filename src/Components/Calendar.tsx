@@ -4,6 +4,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useEvent } from 'src/Hooks/useEvents';
+import { useUser } from 'src/Hooks/useUser';
+import { arrayStringParse } from 'src/Types/helpers';
 
 function renderEventContent(eventContent: EventContentArg) {
   return (
@@ -16,7 +18,7 @@ function renderEventContent(eventContent: EventContentArg) {
 
 const Calendar: FC = () => {
   const Events = useEvent();
-
+  const User = useUser();
   const handleEventClick = (clickInfo: EventClickArg) => {
     if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
       Events.removeEvent(parseInt(clickInfo.event.id));
@@ -38,7 +40,8 @@ const Calendar: FC = () => {
         end: selectInfo.endStr,
         // allDay: selectInfo.allDay,
         // @todo organization color, URL
-        backgroundColor: '#3788d8',
+        organizationId: 3,
+        backgroundColor: '#6447cc',
         url: '',
       });
       console.log('after add', Events.events);
@@ -60,7 +63,7 @@ const Calendar: FC = () => {
       selectable={true}
       selectMirror={true}
       dayMaxEvents={true}
-      events={Events.events}
+      events={Events.eventsFiltered(arrayStringParse(User.user.organizationsSelected))}
       select={handleDateSelect}
       eventContent={renderEventContent} // custom render function
       eventClick={handleEventClick}
