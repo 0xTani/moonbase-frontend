@@ -32,6 +32,17 @@ export const EVENT_NEW_BLANK: IEventNew = {
   organizationId: -1,
 };
 
+export const EVENT_BLANK: IEvent = {
+  id: '',
+  title: '',
+  start: '',
+  end: '',
+  message: '',
+  backgroundColor: '#3788d8',
+  url: '',
+  organizationId: -1,
+};
+
 interface IEventResponse {
   data: IEvent[];
   limit: number;
@@ -42,28 +53,33 @@ interface IEventResponse {
 export interface IEventContext {
   events: Array<IEvent>;
   setEvents?: React.Dispatch<React.SetStateAction<IEvent[]>>;
-  addEvent: (event: IEventNew) => void;
+  addEvent: (event: IEventNew) => Promise<void>;
   removeEvent: (eventId: number) => void;
+  eventChanged: (event: IEvent) => void;
   initializeEvents: () => void;
   eventsFiltered: (idArray: number[]) => Array<IEvent>;
+  getEventById: (id: string) => IEvent | null;
 }
 
 export const EventContext = createContext<IEventContext>({
   events: [],
   setEvents: () => {},
-  addEvent: (event: IEventNew) => {},
+  addEvent: (event: IEventNew) => new Promise(() => {}),
+  eventChanged: (event: IEvent) => {},
   removeEvent: (eventId: number) => {},
   initializeEvents: () => {},
   eventsFiltered: (idArray: number[]) => [],
+  getEventById: (id: string) => EVENT_BLANK,
 });
 
 export const EventProvider: FC<{ children: ReactNode }> = props => {
   const [events, setEvents] = React.useState<IEvent[]>([]);
   const EventService = feathersClient.service('event');
 
-  function addEvent(event: IEventNew) {
-    EventService.create(event).then(console.log('ok'));
-  }
+  const addEvent = (event: IEventNew) =>
+    new Promise<void>((resolve, reject) => {
+      EventService.create(event).then(resolve).catch(reject);
+    });
 
   function removeEvent(eventId: number) {
     EventService.remove(eventId);
@@ -73,6 +89,18 @@ export const EventProvider: FC<{ children: ReactNode }> = props => {
     EventService.find().then((events: IEventResponse) => {
       setEvents(events.data);
     });
+  }
+
+  function eventChanged(event: IEvent) {
+    EventService.patch(event.id, event);
+  }
+
+  function getEventById(id: string): IEvent | null {
+    let event = null;
+    events.forEach((e: IEvent) => {
+      if (parseInt(e.id) === parseInt(id)) event = e;
+    });
+    return event;
   }
 
   function eventsFiltered(idArray: number[]) {
@@ -101,7 +129,9 @@ export const EventProvider: FC<{ children: ReactNode }> = props => {
   }
 
   return (
-    <EventContext.Provider value={{ events, setEvents, addEvent, removeEvent, initializeEvents, eventsFiltered }}>
+    <EventContext.Provider
+      value={{ events, setEvents, addEvent, getEventById, eventChanged, removeEvent, initializeEvents, eventsFiltered }}
+    >
       {props.children}
     </EventContext.Provider>
   );

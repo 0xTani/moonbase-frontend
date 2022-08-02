@@ -1,5 +1,12 @@
 import React, { FC } from 'react';
-import FullCalendar, { EventApi, DateSelectArg, EventClickArg, EventContentArg } from '@fullcalendar/react';
+import FullCalendar, {
+  EventApi,
+  DateSelectArg,
+  EventClickArg,
+  EventContentArg,
+  CalendarApi,
+  EventChangeArg,
+} from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -39,6 +46,7 @@ const Calendar: FC = () => {
   const User = useUser();
   const Organization = useOrganization();
   const [newEvent, setNewEvent] = React.useState<IEventNew>(EVENT_NEW_BLANK);
+  const [calendarApi, setCalendarApi] = React.useState<CalendarApi | null>(null);
 
   const handleEventClick = (clickInfo: EventClickArg) => {
     if (Organization.adminMode) {
@@ -59,14 +67,27 @@ const Calendar: FC = () => {
         organizationId: parseInt(Organization.organizations[0].id),
         backgroundColor: Organization.organizations[0].backgroundColor,
       });
-      calendarApi.unselect(); // clear date selection
-      console.log('before add', Events.events);
+      setCalendarApi(calendarApi);
+      // calendarApi.unselect(); // clear date selection
     }
   };
+
+  function addedEvent() {
+    if (calendarApi) calendarApi.unselect();
+    setNewEvent(EVENT_NEW_BLANK);
+  }
 
   const handleChange = (prop: keyof IEventNew) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewEvent({ ...newEvent, [prop]: event.target.value });
   };
+
+  function eventChanged(eventChangeArg: EventChangeArg) {
+    const changedEvent = eventChangeArg.event;
+    const eventObj = Events.getEventById(changedEvent.id);
+    if (eventObj) {
+      Events.eventChanged({ ...eventObj, start: changedEvent.startStr, end: changedEvent.endStr });
+    }
+  }
 
   const OrganizationSelector = () => {
     const orgButtons = Organization.organizations.map((og: IOrganization) => {
@@ -94,6 +115,7 @@ const Calendar: FC = () => {
 
   const addEventModal = (
     <Modal
+      // onClick={(e: any) => setNewEvent(EVENT_NEW_BLANK)}
       open={newEvent.organizationId !== -1}
       onClose={() => setNewEvent(EVENT_NEW_BLANK)}
       aria-labelledby="modal-modal-title"
@@ -146,7 +168,7 @@ const Calendar: FC = () => {
               {OrganizationSelector()}
               <Button
                 onClick={() => {
-                  Events.addEvent(newEvent);
+                  Events.addEvent(newEvent).then(() => addedEvent());
                 }}
               >
                 Add event
@@ -169,19 +191,17 @@ const Calendar: FC = () => {
           right: 'timeGridWeek',
         }}
         initialView="timeGridWeek"
-        editable={true}
+        editable={Organization.adminMode}
         slotMinTime={'08:00:00'}
         slotMaxTime={'24:00:00'}
-        selectable={true}
+        selectable={Organization.adminMode}
         selectMirror={true}
         dayMaxEvents={true}
         events={Events.eventsFiltered(arrayStringParse(User.user.organizationsSelected))}
         select={handleDateSelect}
         eventContent={renderEventContent} // custom render function
         eventClick={handleEventClick}
-        /* @todo event change
-            eventChange={function(){}}
-            */
+        eventChange={eventChanged}
       />
     </>
   );
