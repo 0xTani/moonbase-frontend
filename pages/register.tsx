@@ -31,7 +31,7 @@ const Register: NextPage = () => {
   const marginBottom = '25px';
 
   const memberCard = (
-    <Grid item md={4}>
+    <Grid item md={8}>
       <Card sx={{ textAlign: 'left' }}>
         <CardContent>
           <Typography variant="h5" component="span" sx={{ margin: '10px 0 10px 0', fontWeight: 600, flexGrow: 1 }}>
@@ -39,24 +39,25 @@ const Register: NextPage = () => {
           </Typography>
         </CardContent>
         <Divider></Divider>
-        <CardContent>
+        <CardContent sx={{ textAlign: 'center' }}>
           {/* Username */}
           <FormControl variant="outlined" fullWidth sx={{ marginBottom }}>
             <InputLabel htmlFor="outlined-adornment-ethaddress">Username</InputLabel>
             <OutlinedInput
+              required
               onChange={handleChange('username')}
               value={newUser.username}
               id="register-username"
               label="Username"
             />
-            <FormHelperText>Username</FormHelperText>
+            <FormHelperText>Username *</FormHelperText>
           </FormControl>
 
           {/* Alias */}
           <FormControl variant="outlined" fullWidth sx={{ marginBottom }}>
             <InputLabel htmlFor="outlined-adornment-ethaddress">Alias</InputLabel>
             <OutlinedInput onChange={handleChange('alias')} value={newUser.alias} id="register-alias" label="Alias" />
-            <FormHelperText>Alias - Can be blank</FormHelperText>
+            <FormHelperText>Alias (Blank sets your username)</FormHelperText>
           </FormControl>
 
           {/* Twitter */}
@@ -68,7 +69,7 @@ const Register: NextPage = () => {
               id="register-twitter"
               label="Twitter"
             />
-            <FormHelperText>Twitter - Can be blank</FormHelperText>
+            <FormHelperText>Twitter </FormHelperText>
           </FormControl>
 
           {/* Telegram */}
@@ -80,7 +81,7 @@ const Register: NextPage = () => {
               id="register-telegram"
               label="Alias"
             />
-            <FormHelperText>Telegram - Can be blank</FormHelperText>
+            <FormHelperText>Telegram </FormHelperText>
           </FormControl>
 
           {/* Fob ID field */}
@@ -93,7 +94,7 @@ const Register: NextPage = () => {
               value={newUser.fobId}
               label="Fob Number"
             />
-            <FormHelperText>The number on your fob</FormHelperText>
+            <FormHelperText>The number on your fob (if you are a DCTRL member)</FormHelperText>
           </FormControl>
           {/* Password */}
           <FormControl variant="outlined" fullWidth sx={{ marginBottom }}>
@@ -105,7 +106,7 @@ const Register: NextPage = () => {
               value={newUser.password}
               label="Password"
             />
-            <FormHelperText>Password</FormHelperText>
+            <FormHelperText>Password *</FormHelperText>
           </FormControl>
           {/* Months active field */}
           <FormControl variant="outlined" fullWidth sx={{ marginBottom: '20px' }}>
@@ -117,7 +118,7 @@ const Register: NextPage = () => {
               value={newUser.repeatpassword}
               label="Repeat password"
             />
-            <FormHelperText>Repeat password</FormHelperText>
+            <FormHelperText>Repeat password *</FormHelperText>
           </FormControl>
 
           <Button

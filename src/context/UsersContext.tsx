@@ -1,9 +1,6 @@
 import feathersClient from 'client';
 import React, { createContext, useEffect } from 'react';
 import { FC, ReactNode } from 'react';
-import { useUser } from 'src/Hooks/useUser';
-import { useUsers } from 'src/Hooks/useUsers';
-import { DEFAULT_USER } from 'src/Types/Constants';
 import { isDev } from 'src/Types/helpers';
 import { IBadge, IBadgeDisplay, IUser } from 'src/Types/TUser';
 
@@ -106,7 +103,6 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
   }
 
   // const a: IUser[] = [DEFAULT_USER, DEFAULT_USER];
-
   // console.log(
   //   a.reduce(
   //     (prev, cur) => ({

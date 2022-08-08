@@ -3,7 +3,6 @@ import feathersClient from 'client';
 import React, { createContext, ReactNode } from 'react';
 import { FC } from 'react';
 import { isIdInArray } from 'src/Types/helpers';
-import { IUser } from 'src/Types/TUser';
 
 // @todo helps know what is in an event, remove in prod
 interface TEvent extends EventInput {}
@@ -14,7 +13,7 @@ export interface IEvent {
   title: string;
   start: string;
   end?: string;
-  message: string;
+  description: string;
   backgroundColor: string;
   url: string;
   organizationId: number;
@@ -26,7 +25,7 @@ export const EVENT_NEW_BLANK: IEventNew = {
   title: '',
   start: '',
   end: '',
-  message: '',
+  description: '',
   backgroundColor: '#3788d8',
   url: '',
   organizationId: -1,
@@ -37,7 +36,7 @@ export const EVENT_BLANK: IEvent = {
   title: '',
   start: '',
   end: '',
-  message: '',
+  description: '',
   backgroundColor: '#3788d8',
   url: '',
   organizationId: -1,
@@ -69,7 +68,7 @@ export const EventContext = createContext<IEventContext>({
   removeEvent: (eventId: number) => {},
   initializeEvents: () => {},
   eventsFiltered: (idArray: number[]) => [],
-  getEventById: (id: string) => EVENT_BLANK,
+  getEventById: (id: string) => null,
 });
 
 export const EventProvider: FC<{ children: ReactNode }> = props => {

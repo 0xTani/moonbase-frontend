@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
 import FullCalendar, {
-  EventApi,
   DateSelectArg,
   EventClickArg,
   EventContentArg,
@@ -18,17 +18,20 @@ import {
   Button,
   Card,
   CardContent,
+  CardHeader,
   Checkbox,
   Divider,
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   InputLabel,
+  Link,
   Modal,
   OutlinedInput,
   Typography,
 } from '@mui/material';
-import { EVENT_NEW_BLANK, IEventNew } from 'src/context/EventContext';
+import { EVENT_NEW_BLANK, IEvent, IEventNew } from 'src/context/EventContext';
 import { useOrganization } from 'src/Hooks/useOrganization';
 import { IOrganization } from 'src/context/OrganizationContext';
 
@@ -46,15 +49,12 @@ const Calendar: FC = () => {
   const User = useUser();
   const Organization = useOrganization();
   const [newEvent, setNewEvent] = React.useState<IEventNew>(EVENT_NEW_BLANK);
+  const [selectedEvent, setSelectedEvent] = React.useState<IEvent | null>(null);
   const [calendarApi, setCalendarApi] = React.useState<CalendarApi | null>(null);
 
   const handleEventClick = (clickInfo: EventClickArg) => {
-    if (Organization.adminMode) {
-      clickInfo.jsEvent.preventDefault();
-      if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-        Events.removeEvent(parseInt(clickInfo.event.id));
-      }
-    }
+    clickInfo.jsEvent.preventDefault();
+    setSelectedEvent(Events.getEventById(clickInfo.event.id));
   };
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
@@ -120,9 +120,19 @@ const Calendar: FC = () => {
       onClose={() => setNewEvent(EVENT_NEW_BLANK)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      id="addEventModal"
     >
-      <Grid container justifyContent={'center'} alignItems={'center'} sx={{ minHeight: '100vh' }}>
-        <Grid item md={4}>
+      <Grid
+        id="addEventModalGrid"
+        container
+        justifyContent={'center'}
+        alignItems={'center'}
+        sx={{ minHeight: '100vh' }}
+        onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent> & { target: HTMLElement }) => {
+          if (event.target.id === 'addEventModalGrid') setNewEvent(EVENT_NEW_BLANK);
+        }}
+      >
+        <Grid item sm={11} md={10} lg={4} id="addEventModalCard">
           <Card>
             <CardContent>
               <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -154,19 +164,22 @@ const Calendar: FC = () => {
               </FormControl>
 
               <FormControl variant="outlined" fullWidth sx={{ marginBottom: '2rem' }}>
-                <InputLabel htmlFor="input-message">Message</InputLabel>
+                <InputLabel htmlFor="input-description">Description</InputLabel>
                 <OutlinedInput
                   multiline
                   autoComplete="off"
-                  id="input-message"
-                  value={newEvent.message}
-                  onChange={handleChange('message')}
-                  label="Message"
+                  id="input-description"
+                  value={newEvent.description}
+                  onChange={handleChange('description')}
+                  label="description"
+                  rows={8}
                 />
               </FormControl>
 
               {OrganizationSelector()}
               <Button
+                sx={{ marginTop: '2rem' }}
+                variant="contained"
                 onClick={() => {
                   Events.addEvent(newEvent).then(() => addedEvent());
                 }}
@@ -180,9 +193,56 @@ const Calendar: FC = () => {
     </Modal>
   );
 
+  const viewEventModal = (
+    <Modal
+      // onClick={(e: any) => setNewEvent(EVENT_NEW_BLANK)}
+      open={!!selectedEvent}
+      onClose={() => setSelectedEvent(null)}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Grid container justifyContent={'center'} alignItems={'center'} sx={{ minHeight: '100vh' }}>
+        <Grid item md={4}>
+          <Card>
+            <CardHeader
+              action={
+                <IconButton color="error" onClick={() => setSelectedEvent(null)}>
+                  <CloseIcon></CloseIcon>
+                </IconButton>
+              }
+              title={
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  {Organization.getOrganizationById('' + selectedEvent?.organizationId)?.name +
+                    ' - ' +
+                    selectedEvent?.title}
+                </Typography>
+              }
+            ></CardHeader>
+            <Divider />
+            <CardContent>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                {selectedEvent?.description && selectedEvent?.description.length > 0
+                  ? selectedEvent?.description
+                  : 'No event description'}
+              </Typography>
+            </CardContent>
+            <Divider />
+            {selectedEvent?.url !== '' ? (
+              <CardContent>
+                <Link href={selectedEvent?.url}>View online</Link>
+              </CardContent>
+            ) : (
+              ''
+            )}
+          </Card>
+        </Grid>
+      </Grid>
+    </Modal>
+  );
   return (
     <>
       {addEventModal}
+      {viewEventModal}
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         headerToolbar={{

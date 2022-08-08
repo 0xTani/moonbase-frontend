@@ -40,6 +40,7 @@ export interface IOrganizationContext {
   ) => IOrganizationSelected[];
   adminMode: boolean;
   setAdminMode: (mode: boolean) => void;
+  getOrganizationById: (id: string) => IOrganization | null;
 }
 
 export const OrganizationContext = createContext<IOrganizationContext>({
@@ -51,6 +52,7 @@ export const OrganizationContext = createContext<IOrganizationContext>({
   getOrganizationsSelected: (userOrganizationsList: number[], userSelectedOrganizationsList: number[]) => [],
   adminMode: false,
   setAdminMode: (mode: boolean) => {},
+  getOrganizationById: (id: string) => null,
 });
 
 export const OrganizationProvider: FC<{ children: ReactNode }> = props => {
@@ -74,6 +76,14 @@ export const OrganizationProvider: FC<{ children: ReactNode }> = props => {
     OrganizationService.find().then((organizations: IOrganizationResponse) => {
       setOrganizations(organizations.data);
     });
+  }
+
+  function getOrganizationById(id: string): IOrganization | null {
+    let event = null;
+    organizations.forEach((e: IOrganization) => {
+      if (parseInt(e.id) === parseInt(id)) event = e;
+    });
+    return event;
   }
 
   function getOrganizationsSelected(userOrganizationsList: number[], userSelectedOrganizationsList: number[]) {
@@ -118,6 +128,7 @@ export const OrganizationProvider: FC<{ children: ReactNode }> = props => {
         getOrganizationsSelected,
         adminMode,
         setAdminMode,
+        getOrganizationById,
       }}
     >
       {props.children}

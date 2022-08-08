@@ -83,7 +83,6 @@ export const UserProvider: FC<{ children: ReactNode }> = props => {
       selectedArray.push(organizationId);
     }
     selectedArray.sort();
-
     feathersClient.service('users').patch(user.id, { organizationsSelected: selectedArray });
   }
 
