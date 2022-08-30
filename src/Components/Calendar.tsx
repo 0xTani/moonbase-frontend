@@ -29,11 +29,15 @@ import {
   Link,
   Modal,
   OutlinedInput,
+  Table,
   Typography,
 } from '@mui/material';
 import { EVENT_NEW_BLANK, IEvent, IEventNew } from 'src/context/EventContext';
 import { useOrganization } from 'src/Hooks/useOrganization';
 import { IOrganization } from 'src/context/OrganizationContext';
+import feathersClient from 'client';
+
+const cardModal = { border: '2px solid #ccccff77', boxShadow: '2px 2px 12px #ccccff44' };
 
 function renderEventContent(eventContent: EventContentArg) {
   return (
@@ -89,10 +93,15 @@ const Calendar: FC = () => {
     }
   }
 
+  function deleteEvent(id: number) {
+    feathersClient.service('event').remove(id);
+  }
+
   const OrganizationSelector = () => {
     const orgButtons = Organization.organizations.map((og: IOrganization) => {
       return (
         <FormControlLabel
+          key={'calendar' + og.id}
           control={<Checkbox />}
           sx={{
             userSelect: 'none',
@@ -133,45 +142,47 @@ const Calendar: FC = () => {
         }}
       >
         <Grid item sm={11} md={10} lg={4} id="addEventModalCard">
-          <Card>
+          <Card sx={cardModal}>
             <CardContent>
               <Typography id="modal-modal-title" variant="h6" component="h2">
-                New Event
+                New Event 📅
               </Typography>
             </CardContent>
             <Divider />
             <CardContent sx={{ textAlign: 'center' }}>
               <FormControl variant="outlined" fullWidth sx={{ marginBottom: '2rem' }}>
-                <InputLabel htmlFor="input-title">Title</InputLabel>
+                <InputLabel htmlFor="input-title">Title 🔠</InputLabel>
+                {/* @todo fix autofocus */}
                 <OutlinedInput
+                  autoFocus
                   autoComplete="off"
                   id="input-title"
                   value={newEvent.title}
                   onChange={handleChange('title')}
-                  label="Title"
+                  label="Title 🔠"
                 />
               </FormControl>
 
               <FormControl variant="outlined" fullWidth sx={{ marginBottom: '2rem' }}>
-                <InputLabel htmlFor="input-url">Url</InputLabel>
+                <InputLabel htmlFor="input-url">Url 🎯</InputLabel>
                 <OutlinedInput
                   autoComplete="off"
                   id="input-url"
                   value={newEvent.url}
                   onChange={handleChange('url')}
-                  label="url"
+                  label="url 🎯"
                 />
               </FormControl>
 
               <FormControl variant="outlined" fullWidth sx={{ marginBottom: '2rem' }}>
-                <InputLabel htmlFor="input-description">Description</InputLabel>
+                <InputLabel htmlFor="input-description">Description 🧾</InputLabel>
                 <OutlinedInput
                   multiline
                   autoComplete="off"
                   id="input-description"
                   value={newEvent.description}
                   onChange={handleChange('description')}
-                  label="description"
+                  label="description 🧾"
                   rows={8}
                 />
               </FormControl>
@@ -193,6 +204,46 @@ const Calendar: FC = () => {
     </Modal>
   );
 
+  function renderEventList() {
+    const items = Events.events.map((event: IEvent) => {
+      return (
+        <Grid
+          md={4}
+          sx={{ padding: ' 20px 10px' }}
+          onClick={() => {
+            deleteEvent(parseInt(event.id));
+          }}
+        >
+          <Card sx={{}}>
+            <CardHeader title={event.title}></CardHeader>
+
+            <CardContent>
+              <table>
+                <th>
+                  <tr>ID</tr>
+                  <tr>description</tr>
+                  <tr>url</tr>
+                  <tr>start</tr>
+                  <tr>end</tr>
+                </th>
+
+                <td>
+                  <tr>{event.id}</tr>
+                  <tr>{event.description}</tr>
+                  <tr>{event.url}</tr>
+                  <tr>{event.start}</tr>
+                  <tr>{event.end}</tr>
+                </td>
+              </table>
+            </CardContent>
+          </Card>
+        </Grid>
+      );
+    });
+
+    return <Grid container>{items}</Grid>;
+  }
+
   const viewEventModal = (
     <Modal
       // onClick={(e: any) => setNewEvent(EVENT_NEW_BLANK)}
@@ -201,9 +252,18 @@ const Calendar: FC = () => {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Grid container justifyContent={'center'} alignItems={'center'} sx={{ minHeight: '100vh' }}>
+      <Grid
+        id="viewEventModalGrid"
+        container
+        justifyContent={'center'}
+        alignItems={'center'}
+        sx={{ minHeight: '100vh' }}
+        onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent> & { target: HTMLElement }) => {
+          if (event.target.id === 'viewEventModalGrid') setSelectedEvent(null);
+        }}
+      >
         <Grid item md={4}>
-          <Card>
+          <Card sx={cardModal}>
             <CardHeader
               action={
                 <IconButton color="error" onClick={() => setSelectedEvent(null)}>
@@ -219,7 +279,7 @@ const Calendar: FC = () => {
               }
             ></CardHeader>
             <Divider />
-            <CardContent>
+            <CardContent sx={{ minHeight: '300px' }}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
                 {selectedEvent?.description && selectedEvent?.description.length > 0
                   ? selectedEvent?.description
@@ -263,6 +323,7 @@ const Calendar: FC = () => {
         eventClick={handleEventClick}
         eventChange={eventChanged}
       />
+      {renderEventList()}
     </>
   );
 };

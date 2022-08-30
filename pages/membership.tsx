@@ -87,13 +87,13 @@ const Users: NextPage = () => {
         }
       } else {
         button = (
-          <Link
-            variant="button"
+          <Button
+            variant="contained"
             href={`https://testnet.rarible.com/token/${CONTRACT_ADDRESS}:${nftId}?tab=details`}
             target="_blank"
           >
             View on Rarible
-          </Link>
+          </Button>
         );
       }
     } else {

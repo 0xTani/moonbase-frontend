@@ -1,9 +1,11 @@
-import { Box, Checkbox, FormControlLabel, Grid } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, Grid } from '@mui/material';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import React from 'react';
 import Calendar from 'src/Components/Calendar';
+import { IEvent } from 'src/context/EventContext';
 import { IOrganizationSelected } from 'src/context/OrganizationContext';
+import { useEvent } from 'src/Hooks/useEvents';
 import { useOrganization } from 'src/Hooks/useOrganization';
 import { useUser } from 'src/Hooks/useUser';
 import { arrayStringParse } from 'src/Types/helpers';
@@ -11,6 +13,7 @@ import { arrayStringParse } from 'src/Types/helpers';
 const Events: NextPage = () => {
   const Organization = useOrganization();
   const User = useUser();
+  const Events = useEvent();
   const isAdmin = true;
 
   const AdminModeToggle = () => {
@@ -43,6 +46,7 @@ const Events: NextPage = () => {
     ).map((og: IOrganizationSelected) => {
       return (
         <FormControlLabel
+          key={'org' + og.id}
           control={<Checkbox />}
           sx={{
             userSelect: 'none',

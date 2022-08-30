@@ -16,7 +16,7 @@ export const darkTheme = createTheme({
     },
     MuiCard: {
       styleOverrides: {
-        root: { backgroundColor: '#001e3c', color: '#f2a900' },
+        root: { backgroundColor: '#001e3c', color: '#ddddff' },
       },
     },
     MuiInputBase: {
