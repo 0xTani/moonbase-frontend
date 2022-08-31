@@ -29,13 +29,20 @@ import {
   Link,
   Modal,
   OutlinedInput,
-  Table,
   Typography,
 } from '@mui/material';
 import { EVENT_NEW_BLANK, IEvent, IEventNew } from 'src/context/EventContext';
 import { useOrganization } from 'src/Hooks/useOrganization';
 import { IOrganization } from 'src/context/OrganizationContext';
 import feathersClient from 'client';
+
+import ReactDOM from 'react-dom';
+import { QRCodeSVG } from 'qrcode.react';
+
+interface IAttendanceMode {
+  eventId: number;
+  QRcode: string;
+}
 
 const cardModal = { border: '2px solid #ccccff77', boxShadow: '2px 2px 12px #ccccff44' };
 
@@ -55,6 +62,7 @@ const Calendar: FC = () => {
   const [newEvent, setNewEvent] = React.useState<IEventNew>(EVENT_NEW_BLANK);
   const [selectedEvent, setSelectedEvent] = React.useState<IEvent | null>(null);
   const [calendarApi, setCalendarApi] = React.useState<CalendarApi | null>(null);
+  const [attendanceMode, setAttendanceMode] = React.useState<IAttendanceMode | null>(null);
 
   const handleEventClick = (clickInfo: EventClickArg) => {
     clickInfo.jsEvent.preventDefault();
@@ -121,6 +129,48 @@ const Calendar: FC = () => {
 
     return <Box>{orgButtons}</Box>;
   };
+
+  function renderEventList() {
+    const items = Events.events.map((event: IEvent) => {
+      return (
+        <Grid
+          md={4}
+          sx={{ padding: ' 20px 10px' }}
+          onClick={() => {
+            deleteEvent(parseInt(event.id));
+          }}
+        >
+          <Card sx={{}}>
+            <CardHeader title={event.title}></CardHeader>
+
+            <CardContent>
+              <table>
+                <tbody>
+                  <th>
+                    <tr>ID</tr>
+                    <tr>description</tr>
+                    <tr>url</tr>
+                    <tr>start</tr>
+                    <tr>end</tr>
+                  </th>
+
+                  <td>
+                    <tr>{event.id}</tr>
+                    <tr>{event.description}</tr>
+                    <tr>{event.url}</tr>
+                    <tr>{event.start}</tr>
+                    <tr>{event.end}</tr>
+                  </td>
+                </tbody>
+              </table>
+            </CardContent>
+          </Card>
+        </Grid>
+      );
+    });
+
+    return <Grid container>{items}</Grid>;
+  }
 
   const addEventModal = (
     <Modal
@@ -204,45 +254,82 @@ const Calendar: FC = () => {
     </Modal>
   );
 
-  function renderEventList() {
-    const items = Events.events.map((event: IEvent) => {
+  var QRCode = require('qrcode');
+
+  function viewEventAdminMode() {
+    if (Organization.adminMode)
       return (
-        <Grid
-          md={4}
-          sx={{ padding: ' 20px 10px' }}
-          onClick={() => {
-            deleteEvent(parseInt(event.id));
-          }}
-        >
-          <Card sx={{}}>
-            <CardHeader title={event.title}></CardHeader>
+        <Box sx={{ backgroundColor: '#00ff0029', height: 130 }}>
+          <CardContent>
+            <Typography sx={{ marginBottom: '22px' }}>Admin mode</Typography>
 
-            <CardContent>
-              <table>
-                <th>
-                  <tr>ID</tr>
-                  <tr>description</tr>
-                  <tr>url</tr>
-                  <tr>start</tr>
-                  <tr>end</tr>
-                </th>
+            <Button
+              variant={attendanceMode ? 'outlined' : 'contained'}
+              color="secondary"
+              onClick={() => {
+                if (attendanceMode) {
+                  console.log('attendanceMode true');
+                  setAttendanceMode(null);
+                } else {
+                  console.log('attendanceMode false');
 
-                <td>
-                  <tr>{event.id}</tr>
-                  <tr>{event.description}</tr>
-                  <tr>{event.url}</tr>
-                  <tr>{event.start}</tr>
-                  <tr>{event.end}</tr>
-                </td>
-              </table>
-            </CardContent>
-          </Card>
-        </Grid>
+                  setAttendanceMode({ eventId: parseInt(selectedEvent!!.id), QRcode: 'okok' });
+                }
+              }}
+            >
+              Attendance Mode
+            </Button>
+            {/* @todo make special confirm button (clicked once asks for confirmation and click twice fires!) */}
+            <Button variant="contained" color="error" sx={{ float: 'right' }}>
+              Delete Event ✖
+            </Button>
+          </CardContent>
+        </Box>
       );
-    });
-
-    return <Grid container>{items}</Grid>;
+    else return <></>;
   }
+
+  const viewEventModalDescription = (
+    <>
+      <CardContent sx={{ minHeight: '300px' }}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          {selectedEvent?.description && selectedEvent?.description.length > 0
+            ? selectedEvent?.description
+            : 'No event description'}
+        </Typography>
+      </CardContent>
+      <Divider />
+      {selectedEvent?.url !== '' ? (
+        <CardContent>
+          <Link href={selectedEvent?.url}>View online</Link>
+        </CardContent>
+      ) : (
+        ''
+      )}
+    </>
+  );
+
+  const viewEventModalAttendanceMode = (
+    <CardContent sx={{ textAlign: 'center' }}>
+      <Typography variant="h5">Scan to get a participation award</Typography>
+
+      <Box
+        sx={{
+          borderRadius: '10px',
+          marginTop: '1rem',
+          padding: '8px 8px 3px 8px',
+          backgroundColor: 'white',
+          display: 'inline-block',
+          marginBottom: '1rem',
+        }}
+      >
+        <QRCodeSVG size={300} value={`http://localhost:3000/attendance/${selectedEvent?.uuid}`} />
+      </Box>
+
+      <br />
+      <Link href={`http://localhost:3000/attendance/${selectedEvent?.uuid}`}> Linkkkkkk </Link>
+    </CardContent>
+  );
 
   const viewEventModal = (
     <Modal
@@ -264,36 +351,30 @@ const Calendar: FC = () => {
       >
         <Grid item md={4}>
           <Card sx={cardModal}>
-            <CardHeader
-              action={
-                <IconButton color="error" onClick={() => setSelectedEvent(null)}>
-                  <CloseIcon></CloseIcon>
-                </IconButton>
-              }
-              title={
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                  {Organization.getOrganizationById('' + selectedEvent?.organizationId)?.name +
-                    ' - ' +
-                    selectedEvent?.title}
+            <CardContent sx={{ fontSize: '20px' }}>
+              <Box
+                sx={{
+                  userSelect: 'none',
+                  backgroundColor: selectedEvent?.backgroundColor,
+                  padding: '6px 12px',
+                  borderRadius: '5px',
+                  display: 'inline-block',
+                  marginRight: '1rem',
+                }}
+              >
+                <Typography variant="h6">
+                  {Organization.getOrganizationById('' + selectedEvent?.organizationId)?.name}
                 </Typography>
-              }
-            ></CardHeader>
-            <Divider />
-            <CardContent sx={{ minHeight: '300px' }}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                {selectedEvent?.description && selectedEvent?.description.length > 0
-                  ? selectedEvent?.description
-                  : 'No event description'}
-              </Typography>
+              </Box>
+              <span>{selectedEvent && selectedEvent.title}</span>
+              <IconButton sx={{ float: 'right' }} color="error" onClick={() => setSelectedEvent(null)}>
+                <CloseIcon></CloseIcon>
+              </IconButton>
             </CardContent>
+
             <Divider />
-            {selectedEvent?.url !== '' ? (
-              <CardContent>
-                <Link href={selectedEvent?.url}>View online</Link>
-              </CardContent>
-            ) : (
-              ''
-            )}
+            {attendanceMode ? viewEventModalAttendanceMode : viewEventModalDescription}
+            {viewEventAdminMode()}
           </Card>
         </Grid>
       </Grid>
@@ -323,7 +404,7 @@ const Calendar: FC = () => {
         eventClick={handleEventClick}
         eventChange={eventChanged}
       />
-      {renderEventList()}
+      {/* {renderEventList()} */}
     </>
   );
 };

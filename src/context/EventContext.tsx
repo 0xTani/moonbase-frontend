@@ -16,6 +16,7 @@ export interface IEvent {
   description: string;
   backgroundColor: string;
   url: string;
+  uuid: string;
   organizationId: number;
 }
 
@@ -28,6 +29,7 @@ export const EVENT_NEW_BLANK: IEventNew = {
   description: '',
   backgroundColor: '#3788d8',
   url: '',
+  uuid: '',
   organizationId: -1,
 };
 
@@ -37,6 +39,7 @@ export const EVENT_BLANK: IEvent = {
   start: '',
   end: '',
   description: '',
+  uuid: '',
   backgroundColor: '#3788d8',
   url: '',
   organizationId: -1,
@@ -58,6 +61,7 @@ export interface IEventContext {
   initializeEvents: () => void;
   eventsFiltered: (idArray: number[]) => Array<IEvent>;
   getEventById: (id: string) => IEvent | null;
+  getEventByUUID: (UUID: string) => IEvent | null;
 }
 
 export const EventContext = createContext<IEventContext>({
@@ -69,6 +73,7 @@ export const EventContext = createContext<IEventContext>({
   initializeEvents: () => {},
   eventsFiltered: (idArray: number[]) => [],
   getEventById: (id: string) => null,
+  getEventByUUID: (UUID: string) => null,
 });
 
 export const EventProvider: FC<{ children: ReactNode }> = props => {
@@ -92,6 +97,14 @@ export const EventProvider: FC<{ children: ReactNode }> = props => {
 
   function eventChanged(event: IEvent) {
     EventService.patch(event.id, event);
+  }
+
+  function getEventByUUID(UUID: string): IEvent | null {
+    let event = null;
+    events.forEach((e: IEvent) => {
+      if (e.uuid === UUID) event = e;
+    });
+    return event;
   }
 
   function getEventById(id: string): IEvent | null {
@@ -129,7 +142,17 @@ export const EventProvider: FC<{ children: ReactNode }> = props => {
 
   return (
     <EventContext.Provider
-      value={{ events, setEvents, addEvent, getEventById, eventChanged, removeEvent, initializeEvents, eventsFiltered }}
+      value={{
+        events,
+        setEvents,
+        addEvent,
+        getEventById,
+        eventChanged,
+        removeEvent,
+        initializeEvents,
+        eventsFiltered,
+        getEventByUUID,
+      }}
     >
       {props.children}
     </EventContext.Provider>
