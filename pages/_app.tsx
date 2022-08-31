@@ -15,6 +15,7 @@ import { UsersProvider } from 'src/context/UsersContext';
 import './main.css';
 import { EventProvider } from 'src/context/EventContext';
 import { OrganizationProvider } from 'src/context/OrganizationContext';
+import { AttendanceProvider } from 'src/context/AttendanceContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -22,15 +23,17 @@ function MyApp({ Component, pageProps }: AppProps) {
       <UserProvider>
         <OrganizationProvider>
           <EventProvider>
-            <ThemeProvider theme={darkTheme}>
-              <CssBaseline>
-                <WagmiConfig client={wagmiClient}>
-                  <AppLayout>
-                    <Component {...pageProps} />
-                  </AppLayout>
-                </WagmiConfig>
-              </CssBaseline>
-            </ThemeProvider>
+            <AttendanceProvider>
+              <ThemeProvider theme={darkTheme}>
+                <CssBaseline>
+                  <WagmiConfig client={wagmiClient}>
+                    <AppLayout>
+                      <Component {...pageProps} />
+                    </AppLayout>
+                  </WagmiConfig>
+                </CssBaseline>
+              </ThemeProvider>
+            </AttendanceProvider>
           </EventProvider>
         </OrganizationProvider>
       </UserProvider>

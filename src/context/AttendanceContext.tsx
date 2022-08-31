@@ -7,7 +7,7 @@ import { isIdInArray } from 'src/Types/helpers';
 
 export interface IAttendance {
   id: string;
-  attendanceId: number;
+  eventId: number;
   userId: number;
   privateAttendance: boolean;
   poapMinted: boolean;
@@ -16,7 +16,7 @@ export interface IAttendance {
 export type IAttendanceNew = Omit<IAttendance, 'id'>;
 
 export const EVENT_NEW_BLANK: IAttendanceNew = {
-  attendanceId: 0,
+  eventId: 0,
   userId: 0,
   privateAttendance: false,
   poapMinted: false,
@@ -24,7 +24,7 @@ export const EVENT_NEW_BLANK: IAttendanceNew = {
 
 export const EVENT_BLANK: IAttendance = {
   id: '',
-  attendanceId: 0,
+  eventId: 0,
   userId: 0,
   privateAttendance: false,
   poapMinted: false,
@@ -46,9 +46,9 @@ export interface IAttendanceContext {
   initializeAttendances: () => void;
   attendancesFiltered: (idArray: number[]) => Array<IAttendance>;
   getAttendanceById: (id: string) => IAttendance | null;
-  getAttendanceByUserIdAttendanceId: (userId: number, attendanceId: number) => IAttendance | null;
+  getAttendanceByUserIdEventId: (userId: number, eventId: number) => IAttendance | null;
   getAttendancesByUserId: (userId: number) => Array<IAttendance>;
-  getAttendancesByAttendanceId: (attendanceId: number) => Array<IAttendance>;
+  getAttendancesByEventId: (eventId: number) => Array<IAttendance>;
 }
 
 export const AttendanceContext = createContext<IAttendanceContext>({
@@ -60,14 +60,13 @@ export const AttendanceContext = createContext<IAttendanceContext>({
   initializeAttendances: () => {},
   attendancesFiltered: (idArray: number[]) => [],
   getAttendanceById: (id: string) => null,
-  getAttendanceByUserIdAttendanceId: (userId: number, attendanceId: number) => null,
+  getAttendanceByUserIdEventId: (userId: number, attendanceId: number) => null,
   getAttendancesByUserId: (userId: number) => [],
-  getAttendancesByAttendanceId: (attendanceId: number) => [],
+  getAttendancesByEventId: (eventId: number) => [],
 });
 
 export const AttendanceProvider: FC<{ children: ReactNode }> = props => {
   const [attendances, setAttendances] = React.useState<IAttendance[]>([]);
-  const User = useUser();
   const AttendanceService = feathersClient.service('attendance');
 
   const addAttendance = (attendance: IAttendanceNew) =>
@@ -97,22 +96,25 @@ export const AttendanceProvider: FC<{ children: ReactNode }> = props => {
     return attendance;
   }
 
-  function getAttendanceByUserIdAttendanceId(userId: number, attendanceId: number) {
+  function getAttendanceByUserIdEventId(userId: number, eventId: number) {
+    console.log(attendances);
+    console.log('userID', userId);
+    console.log('eventID', eventId);
     const result = attendances.filter((attendance: IAttendance) => {
-      return attendance.attendanceId === attendanceId && attendance.userId === User.user.id;
+      return attendance.eventId === eventId && attendance.userId === userId;
     });
     return result[0] ? result[0] : null;
   }
 
-  function getAttendancesByAttendanceId(attendanceId: number) {
+  function getAttendancesByEventId(eventId: number) {
     return attendances.filter((attendance: IAttendance) => {
-      return attendance.attendanceId === attendanceId;
+      return attendance.eventId === eventId;
     });
   }
 
-  function getAttendancesByUserId(attendanceId: number) {
+  function getAttendancesByUserId(userId: number) {
     return attendances.filter((attendance: IAttendance) => {
-      return attendance.attendanceId === attendanceId;
+      return attendance.userId === userId;
     });
   }
 
@@ -152,9 +154,9 @@ export const AttendanceProvider: FC<{ children: ReactNode }> = props => {
         removeAttendance,
         initializeAttendances,
         attendancesFiltered,
-        getAttendanceByUserIdAttendanceId,
+        getAttendanceByUserIdEventId,
         getAttendancesByUserId,
-        getAttendancesByAttendanceId,
+        getAttendancesByEventId,
       }}
     >
       {props.children}
