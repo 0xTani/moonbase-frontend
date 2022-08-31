@@ -38,6 +38,7 @@ import feathersClient from 'client';
 
 import ReactDOM from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
+import ConfirmButton from './App/Buttons/ConfirmButton';
 
 interface IAttendanceMode {
   eventId: number;
@@ -256,7 +257,7 @@ const Calendar: FC = () => {
 
   var QRCode = require('qrcode');
 
-  function viewEventAdminMode() {
+  function renderEventAdminMode() {
     if (Organization.adminMode)
       return (
         <Box sx={{ backgroundColor: '#00ff0029', height: 130 }}>
@@ -280,9 +281,15 @@ const Calendar: FC = () => {
               Attendance Mode
             </Button>
             {/* @todo make special confirm button (clicked once asks for confirmation and click twice fires!) */}
-            <Button variant="contained" color="error" sx={{ float: 'right' }}>
-              Delete Event ✖
-            </Button>
+            <ConfirmButton
+              onClick={() => {
+                setSelectedEvent(null);
+              }}
+              text="Delete Event ✖"
+              variant="contained"
+              color="error"
+              sx={{ float: 'right', minWidth: '130px' }}
+            />
           </CardContent>
         </Box>
       );
@@ -374,7 +381,7 @@ const Calendar: FC = () => {
 
             <Divider />
             {attendanceMode ? viewEventModalAttendanceMode : viewEventModalDescription}
-            {viewEventAdminMode()}
+            {renderEventAdminMode()}
           </Card>
         </Grid>
       </Grid>
