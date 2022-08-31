@@ -280,9 +280,9 @@ const Calendar: FC = () => {
             >
               Attendance Mode
             </Button>
-            {/* @todo make special confirm button (clicked once asks for confirmation and click twice fires!) */}
             <ConfirmButton
               onClick={() => {
+                feathersClient.service('event').remove(selectedEvent?.id);
                 setSelectedEvent(null);
               }}
               text="Delete Event ✖"
