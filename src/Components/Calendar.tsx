@@ -296,6 +296,22 @@ const Calendar: FC = () => {
     else return <></>;
   }
 
+  const [showAttendanceTab, setShowAttendanceTab] = React.useState<boolean>(false);
+
+  function renderAttendanceTab() {
+    if (!showAttendanceTab) {
+      return (
+        <>
+          <Button variant="outlined" sx={{ padding: '0.5rem', margin: '1rem' }}>
+            Show attendance 👥
+          </Button>
+        </>
+      );
+    } else {
+      return <Box></Box>;
+    }
+  }
+
   const viewEventModalDescription = (
     <>
       <CardContent sx={{ minHeight: '300px' }}>
@@ -381,6 +397,7 @@ const Calendar: FC = () => {
 
             <Divider />
             {attendanceMode ? viewEventModalAttendanceMode : viewEventModalDescription}
+            {renderAttendanceTab()}
             {renderEventAdminMode()}
           </Card>
         </Grid>
