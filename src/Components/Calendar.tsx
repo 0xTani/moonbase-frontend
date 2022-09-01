@@ -320,12 +320,12 @@ const Calendar: FC = () => {
 
   const EventDescription = (
     <>
-      <CardContent sx={{ minHeight: '300px' }}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
+      <CardContent sx={{ minHeight: '300px', fontSize: '18px' }}>
+        <pre style={{ margin: 0 }}>
           {selectedEvent?.description && selectedEvent?.description.length > 0
             ? selectedEvent?.description
             : 'No event description'}
-        </Typography>
+        </pre>
       </CardContent>
       <Divider />
       {selectedEvent?.url !== '' ? (
