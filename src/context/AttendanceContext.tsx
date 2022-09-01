@@ -9,8 +9,8 @@ export interface IAttendance {
   id: string;
   eventId: number;
   userId: number;
-  privateAttendance: boolean;
-  poapMinted: boolean;
+  privateAttendance: 0 | 1;
+  poapMinted: 0 | 1;
 }
 
 export type IAttendanceNew = Omit<IAttendance, 'id'>;
@@ -18,16 +18,16 @@ export type IAttendanceNew = Omit<IAttendance, 'id'>;
 export const EVENT_NEW_BLANK: IAttendanceNew = {
   eventId: 0,
   userId: 0,
-  privateAttendance: false,
-  poapMinted: false,
+  privateAttendance: 0,
+  poapMinted: 0,
 };
 
 export const EVENT_BLANK: IAttendance = {
   id: '',
   eventId: 0,
   userId: 0,
-  privateAttendance: false,
-  poapMinted: false,
+  privateAttendance: 0,
+  poapMinted: 0,
 };
 
 interface IAttendanceResponse {
@@ -48,7 +48,7 @@ export interface IAttendanceContext {
   getAttendanceById: (id: string) => IAttendance | null;
   getAttendanceByUserIdEventId: (userId: number, eventId: number) => IAttendance | null;
   getAttendancesByUserId: (userId: number) => Array<IAttendance>;
-  getAttendancesByEventId: (eventId: number) => Array<IAttendance>;
+  getAttendancesByEventId: (eventId: number, privateAttendance?: 0 | 1) => Array<IAttendance>;
 }
 
 export const AttendanceContext = createContext<IAttendanceContext>({
@@ -62,7 +62,7 @@ export const AttendanceContext = createContext<IAttendanceContext>({
   getAttendanceById: (id: string) => null,
   getAttendanceByUserIdEventId: (userId: number, attendanceId: number) => null,
   getAttendancesByUserId: (userId: number) => [],
-  getAttendancesByEventId: (eventId: number) => [],
+  getAttendancesByEventId: (eventId: number, privateAttendance?: 0 | 1) => [],
 });
 
 export const AttendanceProvider: FC<{ children: ReactNode }> = props => {
@@ -97,18 +97,15 @@ export const AttendanceProvider: FC<{ children: ReactNode }> = props => {
   }
 
   function getAttendanceByUserIdEventId(userId: number, eventId: number) {
-    console.log(attendances);
-    console.log('userID', userId);
-    console.log('eventID', eventId);
     const result = attendances.filter((attendance: IAttendance) => {
       return attendance.eventId === eventId && attendance.userId === userId;
     });
     return result[0] ? result[0] : null;
   }
 
-  function getAttendancesByEventId(eventId: number) {
+  function getAttendancesByEventId(eventId: number, privateAttendance?: 0 | 1) {
     return attendances.filter((attendance: IAttendance) => {
-      return attendance.eventId === eventId;
+      return attendance.eventId === eventId && attendance.privateAttendance === 0;
     });
   }
 
@@ -120,15 +117,10 @@ export const AttendanceProvider: FC<{ children: ReactNode }> = props => {
 
   function attendancesFiltered(idArray: number[]) {
     let attendancesList: IAttendance[] = [];
-    // attendances.map((ev: IAttendance) => {
-    //   if (isIdInArray(ev.organizationId, idArray)) attendancesList.push(ev);
-    // });
-
     return attendancesList;
   }
 
   function initializeAttendances() {
-    console.log('initializeAttendances');
     fetchAttendances();
     AttendanceService.on('created', () => {
       fetchAttendances();

@@ -12,7 +12,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useEvent } from 'src/Hooks/useEvents';
 import { useUser } from 'src/Hooks/useUser';
-import { arrayStringParse } from 'src/Types/helpers';
+import { arrayStringParse, capitalizeFirst } from 'src/Types/helpers';
 import {
   Box,
   Button,
@@ -36,9 +36,13 @@ import { useOrganization } from 'src/Hooks/useOrganization';
 import { IOrganization } from 'src/context/OrganizationContext';
 import feathersClient from 'client';
 
-import ReactDOM from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import ConfirmButton from './App/Buttons/ConfirmButton';
+import { useAttendance } from 'src/Hooks/useAttendance';
+import { IAttendance } from 'src/context/AttendanceContext';
+import { useUsers } from 'src/Hooks/useUsers';
+import { IUser } from 'src/Types/TUser';
+var QRCode = require('qrcode');
 
 interface IAttendanceMode {
   eventId: number;
@@ -59,11 +63,14 @@ function renderEventContent(eventContent: EventContentArg) {
 const Calendar: FC = () => {
   const Events = useEvent();
   const User = useUser();
+  const Users = useUsers();
   const Organization = useOrganization();
+  const Attendance = useAttendance();
   const [newEvent, setNewEvent] = React.useState<IEventNew>(EVENT_NEW_BLANK);
   const [selectedEvent, setSelectedEvent] = React.useState<IEvent | null>(null);
   const [calendarApi, setCalendarApi] = React.useState<CalendarApi | null>(null);
   const [attendanceMode, setAttendanceMode] = React.useState<IAttendanceMode | null>(null);
+  const [showAttendanceTab, setShowAttendanceTab] = React.useState<boolean>(false);
 
   const handleEventClick = (clickInfo: EventClickArg) => {
     clickInfo.jsEvent.preventDefault();
@@ -255,8 +262,6 @@ const Calendar: FC = () => {
     </Modal>
   );
 
-  var QRCode = require('qrcode');
-
   function renderEventAdminMode() {
     if (Organization.adminMode)
       return (
@@ -269,11 +274,8 @@ const Calendar: FC = () => {
               color="secondary"
               onClick={() => {
                 if (attendanceMode) {
-                  console.log('attendanceMode true');
                   setAttendanceMode(null);
                 } else {
-                  console.log('attendanceMode false');
-
                   setAttendanceMode({ eventId: parseInt(selectedEvent!!.id), QRcode: 'okok' });
                 }
               }}
@@ -296,23 +298,27 @@ const Calendar: FC = () => {
     else return <></>;
   }
 
-  const [showAttendanceTab, setShowAttendanceTab] = React.useState<boolean>(false);
-
-  function renderAttendanceTab() {
-    if (!showAttendanceTab) {
-      return (
-        <>
-          <Button variant="outlined" sx={{ padding: '0.5rem', margin: '1rem' }}>
-            Show attendance 👥
-          </Button>
-        </>
-      );
-    } else {
-      return <Box></Box>;
-    }
+  function getAttendanceUserList() {
+    let users: IUser[] = [];
+    Attendance.getAttendancesByEventId(parseInt(selectedEvent?.id ?? '0')).map((attendance: IAttendance) => {
+      users.push(Users.getUserById(attendance.userId)!);
+    });
+    return users;
   }
 
-  const viewEventModalDescription = (
+  const AttendanceList = (
+    <CardContent sx={{ minHeight: '300px', maxHeight: '500px', overflowY: 'scroll' }}>
+      {getAttendanceUserList().map((user: IUser) => {
+        return (
+          <Button variant="outlined" color="success">
+            {capitalizeFirst(user.username)}
+          </Button>
+        );
+      })}
+    </CardContent>
+  );
+
+  const EventDescription = (
     <>
       <CardContent sx={{ minHeight: '300px' }}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -332,10 +338,9 @@ const Calendar: FC = () => {
     </>
   );
 
-  const viewEventModalAttendanceMode = (
+  const AttendanceMode = (
     <CardContent sx={{ textAlign: 'center' }}>
       <Typography variant="h5">Scan to get a participation award</Typography>
-
       <Box
         sx={{
           borderRadius: '10px',
@@ -352,6 +357,19 @@ const Calendar: FC = () => {
       <br />
       <Link href={`http://localhost:3000/attendance/${selectedEvent?.uuid}`}> Linkkkkkk </Link>
     </CardContent>
+  );
+
+  const AttendanceEventToggle = (
+    <>
+      <Divider />
+      <Button
+        variant="outlined"
+        sx={{ padding: '0.5rem', margin: '1rem' }}
+        onClick={() => setShowAttendanceTab(!showAttendanceTab)}
+      >
+        {showAttendanceTab ? 'Show Event 📅' : 'Show attendance 👥'}
+      </Button>
+    </>
   );
 
   const viewEventModal = (
@@ -396,8 +414,8 @@ const Calendar: FC = () => {
             </CardContent>
 
             <Divider />
-            {attendanceMode ? viewEventModalAttendanceMode : viewEventModalDescription}
-            {renderAttendanceTab()}
+            {attendanceMode ? AttendanceMode : showAttendanceTab ? AttendanceList : EventDescription}
+            {!attendanceMode ? AttendanceEventToggle : null}
             {renderEventAdminMode()}
           </Card>
         </Grid>

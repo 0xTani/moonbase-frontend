@@ -9,6 +9,7 @@ export interface IUsersContext {
   setUser: (user: IUser) => void;
   clearUsers: () => void;
   initializeUsers: (from: string) => void;
+  getUserById: (userId: number) => IUser | null;
   getUserBadges: (badgeIdArray: string) => Array<IBadge>;
   getBadgesAdmin: (badgeIdArray: string) => Array<IBadgeDisplay>;
 }
@@ -27,6 +28,7 @@ export const UsersContext = createContext<IUsersContext>({
   setUser: (user: IUser) => {},
   clearUsers: () => {},
   initializeUsers: (from: string) => {},
+  getUserById: (userId: number) => null,
   getUserBadges: (badgeIdArray: string) => [],
   getBadgesAdmin: (badgeIdArray: string) => [],
 });
@@ -51,6 +53,14 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
   //   useEffect(() => {
   //     console.warn('there is no god', users);
   //   }, [users]);
+
+  function getUserById(userId: number) {
+    const usersFiltered = users.filter((user: IUser) => {
+      return user.id === userId;
+    });
+    if (usersFiltered.length > 0) return usersFiltered[0];
+    else return null;
+  }
 
   function setUser(user: IUser) {
     let usersArray = [...users];
@@ -167,7 +177,9 @@ export const UsersProvider: FC<{ children: ReactNode }> = props => {
   }
 
   return (
-    <UsersContext.Provider value={{ users, setUser, clearUsers, initializeUsers, getUserBadges, getBadgesAdmin }}>
+    <UsersContext.Provider
+      value={{ users, setUser, clearUsers, initializeUsers, getUserBadges, getBadgesAdmin, getUserById }}
+    >
       {props.children}
     </UsersContext.Provider>
   );
