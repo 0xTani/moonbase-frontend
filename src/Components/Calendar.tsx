@@ -433,6 +433,7 @@ const Calendar: FC = () => {
           center: 'title',
           right: 'timeGridWeek',
         }}
+        nowIndicator={false}
         initialView="timeGridWeek"
         editable={Organization.adminMode}
         slotMinTime={'08:00:00'}

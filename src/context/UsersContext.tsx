@@ -15,11 +15,11 @@ export interface IUsersContext {
 }
 
 export function isUserIdInArray(id: number, badgeIdJsonString: string) {
-  const badgeIdArray = JSON.parse(badgeIdJsonString);
   try {
+    const badgeIdArray = JSON.parse(badgeIdJsonString);
     return badgeIdArray.filter((badgeId: number) => badgeId === id).length > 0;
   } catch (error) {
-    return false;
+    return '[]';
   }
 }
 

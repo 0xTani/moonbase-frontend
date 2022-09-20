@@ -10,6 +10,8 @@ import { useUsers } from 'src/Hooks/useUsers';
 import { useEvent } from 'src/Hooks/useEvents';
 import { useOrganization } from 'src/Hooks/useOrganization';
 import { useAttendance } from 'src/Hooks/useAttendance';
+import { Alert, Box, Button, Collapse, Grid, IconButton } from '@mui/material';
+import { useAlertContext } from 'src/Hooks/useAlert';
 
 const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const User = useUser();
@@ -18,8 +20,35 @@ const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const Events = useEvent();
   const Attendance = useAttendance();
   const Organization = useOrganization();
+  const alert = useAlertContext();
   // re authenticates user on window reload
   let isLoaded = false;
+
+  const AlertBox = (
+    <Grid container justifyContent={'center'} sx={{ position: 'absolute', zIndex: 1000, marginTop: '100px' }}>
+      <Grid item md={6}>
+        <Collapse in={alert.alert?.showing}>
+          <Alert
+            severity={alert.alert.severity}
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  alert.setShowing(false);
+                }}
+              >
+                x
+              </IconButton>
+            }
+          >
+            {alert.alert.body}
+          </Alert>
+        </Collapse>
+      </Grid>
+    </Grid>
+  );
 
   useEffect(() => {
     if (!isLoaded) {
@@ -51,6 +80,7 @@ const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <>
+      {AlertBox}
       <TopNavBar />
       {!!User.user.username ? <Sidebar /> : ''}
       {children}

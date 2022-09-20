@@ -20,7 +20,7 @@ export const darkTheme = createTheme({
       },
     },
     MuiInputBase: {
-      styleOverrides: { root: { color: '#f2a900' } },
+      styleOverrides: { root: { color: '#ccc' } },
     },
     MuiTextField: {
       styleOverrides: {

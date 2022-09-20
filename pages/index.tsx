@@ -23,6 +23,7 @@ import feathersClient from 'client';
 import { useUser } from 'src/Hooks/useUser';
 import { capitalizeFirst } from 'src/Types/helpers';
 import { useUsers } from 'src/Hooks/useUsers';
+import { useAlertContext } from 'src/Hooks/useAlert';
 
 const Home: NextPage = () => {
   const [credentials, setCredentials] = React.useState({ username: 'tristani', password: 'yesser' });
@@ -46,7 +47,7 @@ const Home: NextPage = () => {
       </HtmlTooltip>
     ));
   }
-
+  const Alert = useAlertContext();
   const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))(({ theme }) => ({
@@ -82,7 +83,7 @@ const Home: NextPage = () => {
       }
       // @todo error typing
     } catch (error: any) {
-      console.warn(error);
+      Alert.toggleAlert({ body: error.message, duration: 2000, severity: 'error', showing: true });
     }
   };
 

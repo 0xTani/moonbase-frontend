@@ -60,5 +60,5 @@ export interface IBadge {
   maxUsers: number;
 }
 export interface IBadgeDisplay extends IBadge {
-  isEquipped: boolean;
+  isEquipped: string | boolean;
 }

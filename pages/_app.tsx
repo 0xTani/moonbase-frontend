@@ -16,26 +16,29 @@ import './main.css';
 import { EventProvider } from 'src/context/EventContext';
 import { OrganizationProvider } from 'src/context/OrganizationContext';
 import { AttendanceProvider } from 'src/context/AttendanceContext';
+import { AlertProvider } from 'src/context/AlertContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <UsersProvider>
       <UserProvider>
-        <OrganizationProvider>
-          <EventProvider>
-            <AttendanceProvider>
-              <ThemeProvider theme={darkTheme}>
-                <CssBaseline>
-                  <WagmiConfig client={wagmiClient}>
-                    <AppLayout>
-                      <Component {...pageProps} />
-                    </AppLayout>
-                  </WagmiConfig>
-                </CssBaseline>
-              </ThemeProvider>
-            </AttendanceProvider>
-          </EventProvider>
-        </OrganizationProvider>
+        <AlertProvider>
+          <OrganizationProvider>
+            <EventProvider>
+              <AttendanceProvider>
+                <ThemeProvider theme={darkTheme}>
+                  <CssBaseline>
+                    <WagmiConfig client={wagmiClient}>
+                      <AppLayout>
+                        <Component {...pageProps} />
+                      </AppLayout>
+                    </WagmiConfig>
+                  </CssBaseline>
+                </ThemeProvider>
+              </AttendanceProvider>
+            </EventProvider>
+          </OrganizationProvider>
+        </AlertProvider>
       </UserProvider>
     </UsersProvider>
   );
