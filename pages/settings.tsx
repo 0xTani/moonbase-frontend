@@ -1,18 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import {
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  FormControl,
-  FormHelperText,
-  Grid,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  Typography,
-} from '@mui/material';
+import { Button, Card, CardContent, Divider, FormControl, FormHelperText, Grid, InputAdornment, InputLabel, OutlinedInput, Typography } from '@mui/material';
 
 import React, { useEffect } from 'react';
 import { useUser } from 'src/Hooks/useUser';
@@ -21,6 +9,7 @@ import { checkIsAccountActive } from 'client/transactions';
 import feathersClient from 'client';
 import { IUser } from 'src/Types/TUser';
 import { useAccount } from 'wagmi';
+import { ComplexInputField } from 'src/Components/App/Inputs/ComplexInputField';
 
 const Settings: NextPage = () => {
   const User = useUser();
@@ -84,6 +73,12 @@ const Settings: NextPage = () => {
       .patch(User.user.id, { fobId: values.fobId })
       .then((u: IUser) => User.setUser!(u));
   }
+
+  function validateNumberOnly(value: string) {
+    var reg = /^[0-9]*$/;
+    return reg.test(value);
+  }
+
   const SettingsCard = User.isAuthenticated ? (
     <Grid item md={10} lg={8} xl={5}>
       <Card sx={{ textAlign: 'left' }}>
@@ -115,12 +110,7 @@ const Settings: NextPage = () => {
               id="outlined-adornment-ethaddress"
               endAdornment={
                 <InputAdornment position="end">
-                  <Button
-                    color="warning"
-                    variant="outlined"
-                    onClick={linkAddress}
-                    sx={{ paddingLeft: '8px', paddingRight: '10px' }}
-                  >
+                  <Button color="warning" variant="outlined" onClick={linkAddress} sx={{ paddingLeft: '8px', paddingRight: '10px' }}>
                     🔗 Link
                   </Button>
                 </InputAdornment>
@@ -129,6 +119,9 @@ const Settings: NextPage = () => {
             />
             <FormHelperText>The ETH address you linked. Press Link to link the connected account</FormHelperText>
           </FormControl>
+
+          <ComplexInputField initialValue={values.fobId} label="Fob ID" helper="ID on the fob you received" validate={validateNumberOnly}></ComplexInputField>
+
           {/* Fob ID field */}
           <FormControl variant="outlined" fullWidth sx={{ marginBottom: '10px' }}>
             <InputLabel htmlFor="outlined-adornment-ethaddress">Fob Number</InputLabel>
@@ -139,13 +132,7 @@ const Settings: NextPage = () => {
               onChange={handleChange('fobId')}
               endAdornment={
                 <InputAdornment position="end">
-                  <Button
-                    disabled={User.user.fobId === values.fobId}
-                    color="warning"
-                    variant="outlined"
-                    onClick={saveFobId}
-                    sx={{ paddingLeft: '8px', paddingRight: '10px' }}
-                  >
+                  <Button disabled={User.user.fobId === values.fobId} color="warning" variant="outlined" onClick={saveFobId} sx={{ paddingLeft: '8px', paddingRight: '10px' }}>
                     💾 Save
                   </Button>
                 </InputAdornment>
@@ -161,14 +148,7 @@ const Settings: NextPage = () => {
         <CardContent sx={{ textAlign: 'center', marginTop: '1rem' }}>
           <FormControl variant="outlined" fullWidth sx={{ marginBottom: '2rem' }}>
             <InputLabel htmlFor="input-password">Password</InputLabel>
-            <OutlinedInput
-              autoComplete="off"
-              id="input-password"
-              type={values.showPassword ? 'text' : 'password'}
-              value={values.password}
-              onChange={handleChange('password')}
-              label="Password"
-            />
+            <OutlinedInput autoComplete="off" id="input-password" type={values.showPassword ? 'text' : 'password'} value={values.password} onChange={handleChange('password')} label="Password" />
           </FormControl>
           <FormControl variant="outlined" fullWidth sx={{ marginBottom: '1rem' }}>
             <InputLabel htmlFor="input-repeat-password">Repeat Password</InputLabel>
@@ -185,9 +165,7 @@ const Settings: NextPage = () => {
             onClick={() => {
               changePassword();
             }}
-            disabled={
-              values.password === '' || values.repeatPassword === '' || values.password !== values.repeatPassword
-            }
+            disabled={values.password === '' || values.repeatPassword === '' || values.password !== values.repeatPassword}
             variant="outlined"
           >
             Change Password
@@ -206,12 +184,7 @@ const Settings: NextPage = () => {
               id="input-credits"
               endAdornment={
                 <InputAdornment position="end">
-                  <Button
-                    color="warning"
-                    variant="outlined"
-                    onClick={linkAddress}
-                    sx={{ paddingLeft: '8px', paddingRight: '10px' }}
-                  >
+                  <Button color="warning" variant="outlined" onClick={linkAddress} sx={{ paddingLeft: '8px', paddingRight: '10px' }}>
                     🔎 Refresh
                   </Button>
                 </InputAdornment>
@@ -245,9 +218,7 @@ const Settings: NextPage = () => {
               }
               label="Status"
             />
-            <FormHelperText>
-              An active user has paid the monthly donation. Refresh to bill the account and activate it
-            </FormHelperText>
+            <FormHelperText>An active user has paid the monthly donation. Refresh to bill the account and activate it</FormHelperText>
           </FormControl>
         </CardContent>
       </Card>
@@ -266,12 +237,7 @@ const Settings: NextPage = () => {
       </Head>
 
       <main>
-        <Grid
-          container
-          alignItems={'center'}
-          justifyContent={'center'}
-          sx={{ minHeight: '100vh', textAlign: 'center', paddingLeft: '250px' }}
-        >
+        <Grid container alignItems={'center'} justifyContent={'center'} sx={{ minHeight: '100vh', textAlign: 'center', paddingLeft: '250px' }}>
           {SettingsCard}
         </Grid>
       </main>

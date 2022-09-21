@@ -1,16 +1,4 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@mui/material';
+import { Button, Card, CardContent, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { IOrganization } from 'src/context/OrganizationContext';
@@ -31,7 +19,7 @@ const Organization: NextPage = () => {
           justifyContent={'center'}
           sx={{
             minHeight: 'calc(100vh - 64px)',
-            textAlign: 'center',
+            textAlign: 'left',
             paddingLeft: '250px',
             marginTop: '64px',
             paddingTop: '30px',
@@ -41,10 +29,13 @@ const Organization: NextPage = () => {
           <Grid item md={8}>
             <Card>
               <CardContent>
-                <Grid item md={8} lg={10} xl={11}>
+                <Typography variant="h6" color="#ccc">
+                  Vancouver's communities
+                </Typography>
+                <Grid item md={8} lg={10} xl={11} sx={{ marginTop: '1rem' }}>
                   <TableContainer component={Paper}>
                     <Table aria-label="simple table">
-                      <TableHead>
+                      <TableHead sx={{ backgroundColor: '#333' }}>
                         <TableRow>
                           <TableCell>Name</TableCell>
                           <TableCell align="left">City</TableCell>
