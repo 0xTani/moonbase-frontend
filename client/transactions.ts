@@ -4,7 +4,7 @@ import moment from 'moment';
 const MOONBASE_TREASURY_ADDRESS = '0x982d6e3eb8aba3c929e2902f1e7a9a73e4d96be7';
 const MEMBERSHIP_PRICE_USD = 40;
 
-// @TODO turn that into a list of accepted tokens
+// rinkeby DAI
 const ACCEPTED_TOKEN = '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735';
 
 // yes im storing api key here, wouldnt do that in a professionnal prod environment
@@ -105,12 +105,7 @@ export function checkTransactions(transactions: Array<ITransaction>) {
   let isAccountActive = false;
   curatedTransactions.map((transaction: ITransactionCurated) => {
     const transactionTime = moment(transaction.timeStamp);
-    if (
-      transactionTime.isAfter(moment().startOf('month')) &&
-      transactionTime.isBefore(moment().endOf('month')) &&
-      transaction.value >= MEMBERSHIP_PRICE_USD
-    )
-      isAccountActive = true;
+    if (transactionTime.isAfter(moment().startOf('month')) && transactionTime.isBefore(moment().endOf('month')) && transaction.value >= MEMBERSHIP_PRICE_USD) isAccountActive = true;
   });
   return isAccountActive;
 }

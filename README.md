@@ -1,4 +1,14 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+The Hub, in this instance: [ YVR Hub ] is a community tool. It handles accounts, events, attendance, poap minting and a generative NFT profile picture based on community contribution.
+
+Members who contribute in the community will get noticed. Other members can vouch for them on certain aspects of organizing events: Social media, buying food, cleaning, bartending, etc.
+
+These social contributions will be turned into badges. Members can display their badges on their profile and on their on chain member card.
+
+In YVR Hub, the app also controls a physical space: Dctrl Vancouver.
+
+It leverages existing infrastructure (raspberry pi's with hardware support) to control the door, a can vending machine and a snack vending machine. Dctrl was funded by vending pop for BTC in the early days.
+The treasury of the machine is still used for rent. This app will add omnichain EVM support to the existing infrastructure. Eventually, I will create a gitcoin grant page and open source the code so people
+can also create their own dectralized communities around the world. Eventually, we will make backend connectors between nodes and create a decetralized network of communities. For now, it is property of Tani
 
 ## Getting Started
 
